@@ -1,4 +1,5 @@
 import React from "react";
+import { Navbar } from "@/components/user/Navbar";
 
 export function AboutSection() {
   return (
@@ -45,5 +46,10 @@ export function AboutSection() {
 }
 
 export default function PublicAboutPage() {
-  return <AboutSection />;
+  return (
+    <>
+      <Navbar />
+      <AboutSection />
+    </>
+  );
 }

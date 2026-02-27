@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Navbar } from "@/components/user/Navbar";
 
 interface Project {
   title: string;
@@ -93,5 +94,10 @@ export function ProjectsSection() {
 }
 
 export default function PublicProjectsPage() {
-  return <ProjectsSection />;
+  return (
+    <>
+      <Navbar />
+      <ProjectsSection />
+    </>
+  );
 }

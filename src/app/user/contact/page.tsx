@@ -1,4 +1,5 @@
 import React from "react";
+import { Navbar } from "@/components/user/Navbar";
 
 export function ContactSection() {
   return (
@@ -38,5 +39,10 @@ export function ContactSection() {
 }
 
 export default function PublicContactPage() {
-  return <ContactSection />;
+  return (
+    <>
+      <Navbar />
+      <ContactSection />
+    </>
+  );
 }

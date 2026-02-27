@@ -7,6 +7,7 @@ import { ProjectsSection } from "./user/projects/page";
 import { ExperienceSection } from "./user/experience/page";
 import { ContactSection } from "./user/contact/page";
 import { Navbar } from "@/components/user/Navbar";
+import Footer from "@/components/user/Footer";
 
 // ── Animated counter hook ──────────────────────────────────────────────────
 function useCounter(end: number, duration = 1500, start = false) {
@@ -120,6 +121,7 @@ export default function Home() {
         ::-webkit-scrollbar-thumb { background: #393E46; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #00ADB5; }
       `}</style>
+
       <Navbar />
       {/* ── HERO ── */}
       <section
@@ -552,12 +554,7 @@ export default function Home() {
       <ContactSection />
 
       {/* ── FOOTER ── */}
-      <footer
-        className="border-t py-8 text-center text-sm"
-        style={{ borderColor: "#393E46", color: "#EEEEEE40" }}
-      >
-        <p>© 2026 Alvin Deo Ardiansyah · Built with Next.js & ❤️</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

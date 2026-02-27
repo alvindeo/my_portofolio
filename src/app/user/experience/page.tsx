@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { Navbar } from "@/components/user/Navbar";
 
 interface Experience {
   role: string;
@@ -98,5 +99,10 @@ export function ExperienceSection() {
 }
 
 export default function PublicExperiencePage() {
-  return <ExperienceSection />;
+  return (
+    <>
+      <Navbar />
+      <ExperienceSection />
+    </>
+  );
 }
