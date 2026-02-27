@@ -39,6 +39,38 @@ const skills = [
   { category: "Tools", items: ["Git", "Figma", "PostgreSQL", "Docker"] },
 ];
 
+interface Experience {
+  date: string;
+  role: string;
+  org: string;
+  desc: string;
+  tags: string[];
+}
+
+const experiences: Experience[] = [
+  {
+    role: "Event Leader",
+    org: "Student Organization – Technology Division",
+    date: "March 2024 – Present",
+    desc: "Led technology events with hundreds of participants, managing end-to-end event operations from planning to execution.",
+    tags: ["Leadership", "Event Management", "Technology"],
+  },
+  {
+    role: "Software Engineer",
+    org: "Academic Project",
+    date: "January 2024 – June 2024",
+    desc: "Developed structured, data-driven web solutions using Python, Laravel, and JavaScript for real-world use cases.",
+    tags: ["Python", "Laravel", "JavaScript"],
+  },
+  // {
+  //   role: "AI Developer",
+  //   org: "Personal Projects",
+  //   date: "2023 – Present",
+  //   desc: "Built a Computer Vision system using YOLOv8 for cataract detection and developed a RAG-based chatbot integrated with LLM APIs.",
+  //   tags: ["YOLOv8", "RAG", "LLM APIs", "Computer Vision"],
+  // },
+];
+
 // ── Main ───────────────────────────────────────────────────────────────────
 export default function Home() {
   const [visible, setVisible] = useState(false);
@@ -88,9 +120,7 @@ export default function Home() {
         ::-webkit-scrollbar-thumb { background: #393E46; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #00ADB5; }
       `}</style>
-
       <Navbar />
-
       {/* ── HERO ── */}
       <section
         className="min-h-screen flex flex-col justify-center relative overflow-hidden px-6"
@@ -230,7 +260,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-
       {/* ── ABOUT ── */}
       <section id="about">
         <AboutSection />
@@ -288,7 +317,236 @@ export default function Home() {
       <ProjectsSection />
 
       {/* ── EXPERIENCE ── */}
-      <ExperienceSection />
+      <section
+        id="experience"
+        className="py-24"
+        style={{ background: "#1a1f26" }}
+      >
+        <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+        .timeline-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .timeline-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,173,181,0.15); }
+        .tag { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:500; background:rgba(0,173,181,0.12); color:#00ADB5; border:1px solid rgba(0,173,181,0.25); }
+        @media (max-width: 768px) {
+          .timeline-left { padding-right: 0 !important; text-align: left !important; align-items: flex-start !important; }
+          .timeline-right { padding-left: 0 !important; }
+          .timeline-connector-left { display: none; }
+          .timeline-connector-right { display: none; }
+          .timeline-line { left: 16px !important; }
+          .timeline-dot { left: 8px !important; right: auto !important; }
+          .timeline-row { flex-direction: column !important; padding-left: 48px !important; }
+        }
+      `}</style>
+
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Header */}
+          <div className="mb-16">
+            <p
+              className="text-xs tracking-widest uppercase mb-3"
+              style={{ color: "#00ADB5", fontFamily: "'DM Sans', sans-serif" }}
+            >
+              Experience
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Syne', sans-serif",
+                fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
+                fontWeight: 800,
+                color: "#EEEEEE",
+                lineHeight: 1.1,
+              }}
+            >
+              Where I've contributed
+            </h2>
+          </div>
+
+          {/* Timeline */}
+          <div className="relative">
+            {/* Vertical center line */}
+            <div
+              className="timeline-line absolute top-0 bottom-0 w-px"
+              style={{
+                left: "50%",
+                transform: "translateX(-50%)",
+                background:
+                  "linear-gradient(to bottom, transparent, #00ADB5 10%, #00ADB5 90%, transparent)",
+                opacity: 0.3,
+              }}
+            />
+
+            <div className="space-y-16">
+              {experiences.slice(0, 3).map((exp, i) => {
+                const isRight = i % 2 === 0;
+                const isViewAll = i === 1;
+                const descText = isViewAll
+                  ? exp.desc.slice(0, 100) + "..."
+                  : exp.desc;
+
+                return (
+                  <div
+                    key={i}
+                    className="timeline-row relative flex items-center"
+                    style={{ minHeight: "120px" }}
+                  >
+                    {/* LEFT SIDE */}
+                    <div
+                      className={`timeline-left w-1/2 pr-12 flex flex-col ${
+                        isRight
+                          ? "items-end text-right opacity-0 pointer-events-none"
+                          : "items-end text-right"
+                      }`}
+                    >
+                      {!isRight && (
+                        <div
+                          className="timeline-card p-6 rounded-2xl w-full max-w-sm"
+                          style={{
+                            background: "#393E46",
+                            border: "1px solid rgba(0,173,181,0.15)",
+                          }}
+                        >
+                          <p
+                            className="text-xs font-mono mb-2"
+                            style={{ color: "#00ADB5" }}
+                          >
+                            {exp.date}
+                          </p>
+                          <h3
+                            className="font-semibold text-base mb-1"
+                            style={{
+                              color: "#EEEEEE",
+                              fontFamily: "'DM Sans', sans-serif",
+                            }}
+                          >
+                            {exp.role}
+                          </h3>
+                          <p
+                            className="text-sm mb-3"
+                            style={{
+                              color: "#00ADB5",
+                              fontFamily: "'DM Sans', sans-serif",
+                            }}
+                          >
+                            {exp.org}
+                          </p>
+                          <p
+                            className="text-sm leading-relaxed mb-4"
+                            style={{
+                              color: "#EEEEEE99",
+                              fontFamily: "'DM Sans', sans-serif",
+                            }}
+                          >
+                            {exp.desc}
+                          </p>
+                          <div className="flex flex-wrap gap-2 justify-end">
+                            {exp.tags.map((tag, j) => (
+                              <span key={j} className="tag">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* CENTER DOT */}
+                    <div
+                      className="timeline-dot absolute z-10 w-4 h-4 rounded-full border-2"
+                      style={{
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        background: "#222831",
+                        borderColor: "#00ADB5",
+                        boxShadow: "0 0 12px rgba(0,173,181,0.5)",
+                      }}
+                    />
+
+                    {/* RIGHT SIDE */}
+                    <div
+                      className={`timeline-right w-1/2 pl-12 flex flex-col ${
+                        !isRight
+                          ? "items-start opacity-0 pointer-events-none"
+                          : "items-start"
+                      }`}
+                    >
+                      {isRight && (
+                        <div
+                          className="timeline-card p-6 rounded-2xl w-full max-w-sm"
+                          style={{
+                            background: "#393E46",
+                            border: "1px solid rgba(0,173,181,0.15)",
+                          }}
+                        >
+                          <p
+                            className="text-xs font-mono mb-2"
+                            style={{ color: "#00ADB5" }}
+                          >
+                            {exp.date}
+                          </p>
+                          <h3
+                            className="font-semibold text-base mb-1"
+                            style={{
+                              color: "#EEEEEE",
+                              fontFamily: "'DM Sans', sans-serif",
+                            }}
+                          >
+                            {exp.role}
+                          </h3>
+                          <p
+                            className="text-sm mb-3"
+                            style={{
+                              color: "#00ADB5",
+                              fontFamily: "'DM Sans', sans-serif",
+                            }}
+                          >
+                            {exp.org}
+                          </p>
+                          <p
+                            className="text-sm leading-relaxed mb-4"
+                            style={{
+                              color: "#EEEEEE99",
+                              fontFamily: "'DM Sans', sans-serif",
+                            }}
+                          >
+                            {descText}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {exp.tags.map((tag, j) => (
+                              <span key={j} className="tag">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* VIEW ALL BUTTON - CENTER */}
+                    {isViewAll && (
+                      <div
+                        className="absolute left-1/2 transform -translate-x-1/2 z-20"
+                        style={{ top: "100%" }}
+                      >
+                        <div
+                          className="mt-8 pt-4 border-t"
+                          style={{ borderColor: "rgba(0,173,181,0.2)" }}
+                        >
+                          <Link
+                            href="/user/experience"
+                            className="text-sm font-medium whitespace-nowrap"
+                            style={{ color: "#00ADB5" }}
+                          >
+                            View all experiences →
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── CONTACT ── */}
       <ContactSection />
