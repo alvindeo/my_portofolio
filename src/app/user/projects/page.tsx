@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Navbar } from "@/components/user/Navbar";
+import Footer from "@/components/user/Footer";
 
 interface Project {
   title: string;
@@ -10,19 +11,19 @@ interface Project {
 export function ProjectsSection() {
   const projects: Project[] = [
     {
-      title: "Project 1",
-      desc: "Description 1",
-      tags: ["tag1", "tag2"],
+      title: "Cataract Detection System",
+      desc: "Computer Vision system using YOLOv8 for early detection of cataract stages from eye images.",
+      tags: ["Python", "PyTorch", "YOLOv8", "Computer Vision"],
     },
     {
-      title: "Project 2",
-      desc: "Description 2",
-      tags: ["tag3", "tag4"],
+      title: "AI Chatbot with RAG",
+      desc: "Intelligent chatbot using Retrieval-Augmented Generation (RAG) and LLM APIs for context-aware responses.",
+      tags: ["Next.js", "OpenAI", "Vector DB", "TypeScript"],
     },
     {
-      title: "Project 3",
-      desc: "Description 3",
-      tags: ["tag5", "tag6"],
+      title: "Portfolio Website",
+      desc: "Modern, minimalist portfolio with smooth scroll animations and dynamic content.",
+      tags: ["Next.js", "Framer Motion", "Tailwind CSS"],
     },
   ];
 
@@ -95,9 +96,12 @@ export function ProjectsSection() {
 
 export default function PublicProjectsPage() {
   return (
-    <>
+    <div style={{ background: "#222831", color: "#EEEEEE", minHeight: "100vh" }}>
       <Navbar />
-      <ProjectsSection />
-    </>
+      <div className="pt-20">
+        <ProjectsSection />
+      </div>
+      <Footer />
+    </div>
   );
 }

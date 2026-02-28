@@ -1,5 +1,6 @@
 import React from "react";
 import { Navbar } from "@/components/user/Navbar";
+import Footer from "@/components/user/Footer";
 
 export function ContactSection() {
   return (
@@ -40,9 +41,12 @@ export function ContactSection() {
 
 export default function PublicContactPage() {
   return (
-    <>
+    <div style={{ background: "#222831", minHeight: "100vh" }}>
       <Navbar />
-      <ContactSection />
-    </>
+      <div className="pt-20">
+        <ContactSection />
+      </div>
+      <Footer />
+    </div>
   );
 }
