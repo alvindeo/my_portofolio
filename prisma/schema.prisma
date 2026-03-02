@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -40,8 +41,8 @@ model About {
 model Skill {
   id       String @id @default(cuid())
   name     String
-  category String  // "Frontend", "Backend", "Tools", dll
-  level    Int     // 1-100
+  category String
+  level    Int
 }
 
 model Experience {
@@ -62,4 +63,14 @@ model Education {
   startDate   DateTime
   endDate     DateTime?
   gpa         String?
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

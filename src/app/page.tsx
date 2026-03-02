@@ -11,6 +11,9 @@ import { Navbar } from "@/components/user/Navbar";
 import Footer from "@/components/user/Footer";
 
 
+import { Code2, Server, Brain, Terminal } from "lucide-react";
+
+
 // ── Components ─────────────────────────────────────────────────────────────
 
 function ScrollReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -48,17 +51,10 @@ function useCounter(end: number, duration = 1500, start = false) {
 
 // ── Data ───────────────────────────────────────────────────────────────────
 const skills = [
-  { category: 'Frontend', items: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Figma'] },
-  { category: 'Backend', items: ['Python', 'Laravel', 'Node.js', 'REST API', 'PostgreSQL'] },
-  { category: 'AI / ML', items: ['YOLOv8', 'RAG', 'LLM APIs', 'Computer Vision', 'Machine Learning'] },
-  { category: 'Tools', items: ['Git', 'Docker', 'VS Code', 'Postman', 'Linux'] },
-]
-
-const stats = [
-  { value: '10+', label: 'Projects Built' },
-  { value: '3+', label: 'Years Learning' },
-  { value: '15+', label: 'Technologies' },
-  { value: '100+', label: 'Event Participants' },
+  { category: 'Frontend', icon: <Code2 size={20} />, items: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Figma'] },
+  { category: 'Backend', icon: <Server size={20} />, items: ['Python', 'Laravel', 'Node.js', 'REST API', 'PostgreSQL'] },
+  { category: 'AI / ML', icon: <Brain size={20} />, items: ['YOLOv8', 'RAG', 'LLM APIs', 'Computer Vision', 'Machine Learning'] },
+  { category: 'Tools', icon: <Terminal size={20} />, items: ['Git', 'Docker', 'VS Code', 'Postman'] },
 ]
 
 // ── Typewriter Hook ──────────────────────────────────────────────────────
@@ -81,7 +77,7 @@ function useTypewriter(text: string, speed = 100, delay = 1000) {
       } else if (isDeleting && index > 0) {
         setIndex(prev => prev - 1);
       } else if (!isDeleting && index === text.length) {
-        setTimeout(() => setIsDeleting(true), 3000); // Pause setalah selesai mengetik
+        setTimeout(() => setIsDeleting(true), 3000);
       } else if (isDeleting && index === 0) {
         setIsDeleting(false);
       }
@@ -129,26 +125,18 @@ export default function Home() {
 
   return (
     <div
-      className="selection:bg-[#00ADB5] selection:text-[#222831]"
+      className="selection:bg-[var(--accent)] selection:text-white"
       style={{
-        background: "#222831",
-        color: "#EEEEEE",
+        background: "var(--bg-primary)",
+        color: "var(--text-primary)",
         fontFamily: "'DM Sans', sans-serif",
+        transition: "background 0.3s ease, color 0.3s ease",
       }}
     >
       {/* Google Font */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
         html { scroll-behavior: smooth; }
-        .tag { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:500; background:rgba(0,173,181,0.08); color:#00ADB5; border:1px solid rgba(0,173,181,0.2); }
-        .card-hover { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease; }
-        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,173,181,0.08); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #222831; }
-        ::-webkit-scrollbar-thumb { background: #393E46; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00ADB5; }
-        .cursor-type::after { content: '|'; animation: blink 1s step-end infinite; color: #00ADB5; margin-left: 2px; }
-        @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
       `}</style>
 
       <Navbar />
@@ -164,7 +152,7 @@ export default function Home() {
           style={{
             y: backgroundY,
             backgroundImage:
-              "linear-gradient(rgba(0,173,181,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,173,181,0.03) 1px, transparent 1px)",
+              `linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)`,
             backgroundSize: "80px 80px",
           }}
         />
@@ -173,7 +161,7 @@ export default function Home() {
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(0,173,181,0.05) 0%, transparent 70%)",
+              "radial-gradient(circle, var(--hero-glow) 0%, transparent 70%)",
           }}
         />
 
@@ -198,6 +186,7 @@ export default function Home() {
               fontWeight: 800,
               lineHeight: 0.95,
               letterSpacing: "-0.04em",
+              color: "var(--text-heading)",
             }}
           >
             <span className={fullName.length <= 9 ? "cursor-type" : ""}>
@@ -205,7 +194,7 @@ export default function Home() {
             </span>
             <br />
             <span 
-              style={{ color: "#00ADB5" }}
+              style={{ color: "var(--accent)" }}
               className={fullName.length > 9 ? "cursor-type" : ""}
             >
               {part2}
@@ -217,7 +206,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mt-6 text-lg font-medium tracking-wide uppercase"
-            style={{ color: "#00ADB5" }}
+            style={{ color: "var(--accent)" }}
           >
             Software Engineer <span className="mx-2 opacity-30">/</span> ML Enthusiast
           </motion.p>
@@ -227,7 +216,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             className="mt-8 max-w-xl text-lg leading-relaxed"
-            style={{ color: "#EEEEEECC" }}
+            style={{ color: "var(--text-muted)" }}
           >
             Informatics student crafting elegant digital experiences through clean code and intelligent systems.
           </motion.p>
@@ -240,22 +229,43 @@ export default function Home() {
           >
             <a
               href="#projects"
-              className="px-8 py-4 rounded-full font-bold text-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,173,181,0.3)] hover:-translate-y-1 active:scale-95"
-              style={{ background: "#00ADB5", color: "#222831" }}
+              className="px-8 py-4 rounded-full font-bold text-sm transition-all duration-300 hover:-translate-y-1 active:scale-95"
+              style={{
+                background: "var(--accent)",
+                color: "var(--bg-primary)",
+                boxShadow: "0 0 0 0 var(--accent-glow)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 20px var(--accent-glow)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 0 var(--accent-glow)";
+              }}
             >
               Explore Work
             </a>
             <a
               href="#contact"
-              className="px-8 py-4 rounded-full font-bold text-sm border-2 transition-all duration-300 hover:bg-white/5 hover:-translate-y-1 active:scale-95"
-              style={{ borderColor: "#343a40", color: "#EEEEEE" }}
+              className="px-8 py-4 rounded-full font-bold text-sm border-2 transition-all duration-300 hover:-translate-y-1 active:scale-95"
+              style={{
+                borderColor: "var(--btn-outline-border)",
+                color: "var(--btn-outline-text)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "var(--accent-dim)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--accent-border)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "transparent";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--btn-outline-border)";
+              }}
             >
               Get in Touch
             </a>
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator with animation */}
+        {/* Scroll indicator */}
         <motion.div 
           className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
           initial={{ opacity: 0 }}
@@ -264,11 +274,11 @@ export default function Home() {
         >
           <div
             className="w-[2px] h-16 relative overflow-hidden"
-            style={{ background: "rgba(238, 238, 238, 0.1)" }}
+            style={{ background: "var(--section-divider)" }}
           >
             <motion.div 
               className="absolute top-0 left-0 right-0 h-1/2"
-              style={{ background: "#00ADB5" }}
+              style={{ background: "var(--accent)" }}
               animate={{ y: ["-100%", "200%"] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
             />
@@ -289,18 +299,18 @@ export default function Home() {
                 key={i}
                 className="text-center p-6 rounded-2xl card-hover"
                 style={{
-                  background: "#393E46",
-                  border: "1px solid rgba(0,173,181,0.1)",
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--card-border)",
                 }}
               >
                 <div
                   className="text-4xl font-bold"
-                  style={{ fontFamily: "'Syne', sans-serif", color: "#00ADB5" }}
+                  style={{ fontFamily: "'Syne', sans-serif", color: "var(--accent)" }}
                 >
                   {stat.value}
                   {stat.suffix}
                 </div>
-                <div className="text-sm mt-1" style={{ color: "#EEEEEE99" }}>
+                <div className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
                   {stat.label}
                 </div>
               </div>
@@ -308,6 +318,7 @@ export default function Home() {
           </div>
         </div>
       </ScrollReveal>
+
       {/* ── ABOUT ── */}
       <ScrollReveal>
         <section id="about">
@@ -317,11 +328,15 @@ export default function Home() {
 
       {/* ── SKILLS ── */}
       <ScrollReveal>
-        <section id="skills" className="py-20" style={{ background: "#1a1f26" }}>
+        <section
+          id="skills"
+          className="py-20"
+          style={{ background: "var(--bg-skills)" }}
+        >
           <div className="max-w-6xl mx-auto px-6">
             <p
               className="text-xs tracking-widest uppercase mb-3"
-              style={{ color: "#00ADB5" }}
+              style={{ color: "var(--accent)" }}
             >
               Skills
             </p>
@@ -331,6 +346,7 @@ export default function Home() {
                 fontFamily: "'Syne', sans-serif",
                 fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
                 fontWeight: 800,
+                color: "var(--text-heading)",
               }}
             >
               Technologies I work with
@@ -341,16 +357,28 @@ export default function Home() {
                   key={i}
                   className="p-6 rounded-2xl card-hover"
                   style={{
-                    background: "#393E46",
-                    border: "1px solid rgba(0,173,181,0.1)",
+                    background: "var(--bg-card)",
+                    border: "1px solid var(--card-border)",
                   }}
                 >
-                  <p
-                    className="text-xs font-semibold tracking-widest uppercase mb-4"
-                    style={{ color: "#00ADB5" }}
-                  >
-                    {group.category}
-                  </p>
+                  <div className="flex items-center gap-3 mb-5">
+                    <div 
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ 
+                        background: "var(--accent-dim)", 
+                        border: "1px solid var(--accent-border)",
+                        color: "var(--accent)"
+                      }}
+                    >
+                      {group.icon}
+                    </div>
+                    <p
+                      className="text-xs font-semibold tracking-widest uppercase"
+                      style={{ color: "var(--accent)" }}
+                    >
+                      {group.category}
+                    </p>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {group.items.map((item, j) => (
                       <span key={j} className="tag">

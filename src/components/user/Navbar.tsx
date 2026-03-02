@@ -2,13 +2,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { motion, useScroll } from "framer-motion";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
   { label: "About", href: "/#about" },
   { label: "Skills", href: "/#skills" },
-  { label: "Projects", href: "/projects" },
-  { label: "Experience", href: "/experience" },
-  { label: "Contact", href: "/contact" },
+  { label: "Projects", href: "/user/projects" },
+  { label: "Experience", href: "/user/experience" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export function Navbar() {
@@ -49,21 +50,29 @@ export function Navbar() {
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled || menuOpen ? "rgba(34,40,49,0.96)" : "transparent",
+        background:
+          scrolled || menuOpen ? "var(--nav-bg)" : "transparent",
         backdropFilter: scrolled || menuOpen ? "blur(12px)" : "none",
-        borderBottom: scrolled || menuOpen ? "1px solid rgba(0,173,181,0.15)" : "none",
+        borderBottom:
+          scrolled || menuOpen
+            ? "1px solid var(--card-border)"
+            : "none",
       }}
     >
       {/* Scroll Progress Bar */}
       <motion.div
-        className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#00ADB5] origin-left z-50"
-        style={{ scaleX: scrollYProgress }}
+        className="absolute bottom-0 left-0 right-0 h-[2px] origin-left z-50"
+        style={{ scaleX: scrollYProgress, background: "var(--accent)" }}
       />
 
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between" ref={menuRef}>
         
         {/* Logo */}
-        <Link href="/" className="font-bold text-lg tracking-tight hover:scale-105 transition-transform" style={{ color: "#00ADB5", fontFamily: "'Syne', sans-serif" }}>
+        <Link
+          href="/"
+          className="font-bold text-lg tracking-tight hover:scale-105 transition-transform"
+          style={{ color: "var(--accent)", fontFamily: "'Syne', sans-serif" }}
+        >
           Alvin
         </Link>
 
@@ -73,43 +82,51 @@ export function Navbar() {
             <a
               key={item.label}
               href={item.href}
-              className="text-sm tracking-wide transition-colors duration-200 hover:text-[#00ADB5]"
-              style={{ color: "#EEEEEE99" }}
+              className="text-sm tracking-wide transition-colors duration-200 hover:text-[var(--accent)]"
+              style={{ color: "var(--text-muted)" }}
             >
               {item.label}
             </a>
           ))}
+
+          {/* Theme Toggle - Desktop */}
+          <ThemeToggle />
         </div>
 
-        {/* Hamburger Button (mobile only) */}
-        <button
-          className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5 relative z-50"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span
-            className="block w-6 h-0.5 transition-all duration-300 origin-center"
-            style={{
-              background: "#00ADB5",
-              transform: menuOpen ? "translateY(8px) rotate(45deg)" : "none",
-            }}
-          />
-          <span
-            className="block w-6 h-0.5 transition-all duration-300"
-            style={{
-              background: "#00ADB5",
-              opacity: menuOpen ? 0 : 1,
-              transform: menuOpen ? "scaleX(0)" : "none",
-            }}
-          />
-          <span
-            className="block w-6 h-0.5 transition-all duration-300 origin-center"
-            style={{
-              background: "#00ADB5",
-              transform: menuOpen ? "translateY(-8px) rotate(-45deg)" : "none",
-            }}
-          />
-        </button>
+        {/* Mobile: Theme Toggle + Hamburger */}
+        <div className="md:hidden flex items-center gap-3">
+          <ThemeToggle />
+
+          {/* Hamburger Button */}
+          <button
+            className="flex flex-col justify-center items-center w-8 h-8 gap-1.5 relative z-50"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span
+              className="block w-6 h-0.5 transition-all duration-300 origin-center"
+              style={{
+                background: "var(--accent)",
+                transform: menuOpen ? "translateY(8px) rotate(45deg)" : "none",
+              }}
+            />
+            <span
+              className="block w-6 h-0.5 transition-all duration-300"
+              style={{
+                background: "var(--accent)",
+                opacity: menuOpen ? 0 : 1,
+                transform: menuOpen ? "scaleX(0)" : "none",
+              }}
+            />
+            <span
+              className="block w-6 h-0.5 transition-all duration-300 origin-center"
+              style={{
+                background: "var(--accent)",
+                transform: menuOpen ? "translateY(-8px) rotate(-45deg)" : "none",
+              }}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Dropdown Menu */}
@@ -122,17 +139,24 @@ export function Navbar() {
       >
         <div
           className="px-6 pb-6 flex flex-col gap-1"
-          style={{ borderTop: "1px solid rgba(0,173,181,0.1)" }}
+          style={{ borderTop: "1px solid var(--card-border)" }}
         >
           {navItems.map((item, i) => (
             <a
               key={item.label}
               href={item.href}
               onClick={() => setMenuOpen(false)}
-              className="py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-[#393E46] hover:text-[#00ADB5]"
+              className="py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200 hover:text-[var(--accent)]"
               style={{
-                color: "#EEEEEE99",
+                color: "var(--text-muted)",
+                background: "transparent",
                 transitionDelay: menuOpen ? `${i * 40}ms` : "0ms",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "var(--accent-dim)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "transparent";
               }}
             >
               {item.label}

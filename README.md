@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Alvin's Minimalist Portfolio
 
-## Getting Started
+Modern, responsive, and minimalist portfolio built with **Next.js**, **Tailwind CSS**, and **Framer Motion**. Featuring smooth scroll animations, a dynamic experience timeline, and modular page structures.
 
-First, run the development server:
+## ✨ Features
+- **Modern UI/UX**: Clean dark theme with `#222831` and `#00ADB5` accents.
+- **Dynamic Animations**: Smooth scroll-reveal effects using `Framer Motion`.
+- **Responsive Tree Timeline**: Interactive and responsive career timeline on the home page.
+- **Detailed Subpages**: Dedicated pages for About, Experience, Projects, and Contact.
+- **Modular Components**: Reusable components like Navbar, Footer, and Sections.
+- **SEO Ready**: Optimized meta tags and semantic HTML structure.
+
+## 🛠️ Tech Stack
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Library**: [React 19](https://react.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+Ensure you have [Node.js](https://nodejs.org/) installed (version 18 or later recommended).
+
+### 2. Installation
+Clone the repository and install the dependencies:
+
+```bash
+# Clone the repository
+git clone https://github.com/alvinodeo/portofolio.git
+
+# Navigate to the project directory
+cd portofolio
+
+# Install dependencies
+npm install
+```
+
+### 3. Running Locally
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 4. Build for Production
+To create an optimized production build:
+
+```bash
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📂 Project Structure
+```text
+src/
+├── app/                  # Next.js App Router
+│   ├── user/             # Subpages (About, Projects, Experience, Contact)
+│   ├── globals.css       # Global styles & Tailwind config
+│   └── page.tsx          # Landing Page
+├── components/           # Reusable UI components
+│   └── user/             # Navbar, Footer, etc.
+└── public/               # Static assets (images, icons)
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌿 Git Workflow
+To keep the project updated:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Check status
+git status
 
-## Learn More
+# Add changes
+git add .
 
-To learn more about Next.js, take a look at the following resources:
+# Commit changes
+git commit -m "feat: your message here"
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Push to repository
+git push origin main
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 License
+This project is for portfolio purposes. Feel free to use the code for inspiration.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Built with ❤️ by **Alvin Deo Ardiansyah**

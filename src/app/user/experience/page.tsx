@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/user/Navbar";
 import Footer from "@/components/user/Footer";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 interface Experience {
   role: string;
@@ -17,41 +17,57 @@ interface Experience {
 
 const experiences: Experience[] = [
   {
-    role: "Event Leader",
-    org: "Student Organization – Technology Division",
-    desc: "Led technology events with hundreds of participants, managing end-to-end event operations from planning to execution.",
-    year: "2024 - Present",
-    tags: ["Leadership", "Event Management", "Technology"],
+    role: "Software Engineer Intern",
+    org: "PT Telkom Indonesia",
+    desc: "Contributed to the development and maintenance of internal web applications, implementing new features and optimizing system performance.",
+    year: "Feb 2025 - Present",
+    tags: ["Project Management", "Web Development", "Backend", "Database", "API"],
     achievements: [
-      "Coordinated a team of 20+ volunteers for multiple tech workshops.",
-      "Successfully managed event budgets and sponsorship acquisitions.",
-      "Increased student engagement in division activities by 40%."
+      "Developed and maintained CRUD features for internal company systems.",
+      "Optimized database queries to improve application performance.",
+      "Collaborated with cross-functional teams using Git-based workflow.",
     ]
   },
   {
-    role: "Software Engineer",
-    org: "Academic Project",
-    desc: "Developed structured, data-driven web solutions using Python, Laravel, and JavaScript for real-world use cases.",
-    year: "2024",
-    tags: ["Python", "Laravel", "JavaScript"],
+    role: "Staff / Technology Division",
+    org: "Himpunan Mahasiswa Teknik Informatika (HMTI)",
+    desc: "Contributed to the planning and execution of technology-driven programs and student development initiatives within the Informatics Student Association.",
+    year: "2023 - Present",
+    tags: ["Leadership", "Project Management", "Event Technology", "Team Collaboration"],
     achievements: [
-      "Built a full-stack inventory management system.",
-      "Optimized database queries decreasing load times by 30%.",
-      "Implemented secure authentication and role-based access control."
+      "Organized and managed technical seminars and workshops with 100+ participants.",
+      "Coordinated cross-division collaboration to ensure smooth event execution.",
+      "Improved internal workflow documentation and digital coordination system.",
+      "Actively contributed to student engagement and technology-based initiatives."
     ]
-  },
+  }
 ];
+
+// ── ANIMATION ─────────────────────────────────────────────────────────────
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      delay: i * 0.1,
+      ease: 'easeOut' as const,
+    },
+  }),
+}
 
 /**
  * TREE VERSION - Specifically for the Home Page
  */
 export function ExperienceSection() {
   return (
-    <section id="experience" className="py-24 relative overflow-hidden" style={{ background: "#1a1f26" }}>
+    <section id="experience" className="py-24 relative overflow-hidden" style={{ background: "var(--bg-primary)" }}>
       <style>{`
         .timeline-card { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease; }
-        .timeline-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,173,181,0.12); }
-        .tag { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:500; background:rgba(0,173,181,0.08); color:#00ADB5; border:1px solid rgba(0,173,181,0.2); }
+        .timeline-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px var(--accent-dim); }
+        .tag { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:500; background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-border); }
         
         @media (max-width: 768px) {
           .timeline-line { left: 24px !important; }
@@ -64,20 +80,21 @@ export function ExperienceSection() {
 
       <div className="max-w-6xl mx-auto px-6">
         <div className="mb-20">
-          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "#00ADB5" }}>Experience</p>
+          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "var(--accent)" }}>Experience</p>
           <h2 style={{
             fontFamily: "'Syne', sans-serif",
             fontSize: "clamp(2rem, 5vw, 3.5rem)",
             fontWeight: 800,
             lineHeight: 1.1,
+            color: "var(--text-heading)"
           }}>
-            My Professional <span style={{ color: "#00ADB5" }}>Timeline</span>
+            My Professional <span style={{ color: "var(--accent)" }}>Timeline</span>
           </h2>
         </div>
 
         <div className="relative">
           <div className="timeline-line absolute left-1/2 top-0 bottom-0 w-px" style={{
-            background: "linear-gradient(to bottom, transparent, #00ADB5 15%, #00ADB5 85%, transparent)",
+            background: "linear-gradient(to bottom, transparent, var(--accent) 15%, var(--accent) 85%, transparent)",
             transform: "translateX(-50%)",
             opacity: 0.2
           }} />
@@ -96,9 +113,9 @@ export function ExperienceSection() {
                     className="timeline-dot absolute left-1/2 w-4 h-4 rounded-full border-2 z-10" 
                     style={{
                       transform: "translateX(-50%)",
-                      background: "#222831",
-                      borderColor: "#00ADB5",
-                      boxShadow: "0 0 15px rgba(0,173,181,0.4)"
+                      background: "var(--bg-primary)",
+                      borderColor: "var(--accent)",
+                      boxShadow: "0 0 15px var(--accent-dim)"
                     }} 
                   />
 
@@ -111,12 +128,12 @@ export function ExperienceSection() {
                         viewport={{ once: false }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="timeline-card p-8 rounded-3xl" 
-                        style={{ background: "#393E46", border: "1px solid rgba(0,173,181,0.1)" }}
+                        style={{ background: "var(--bg-card)", border: "1px solid var(--card-border)" }}
                       >
-                        <span className="text-xs font-bold mb-3 block" style={{ color: "#00ADB5" }}>{exp.year}</span>
-                        <h3 className="text-xl font-bold mb-1" style={{ fontFamily: "'Syne', sans-serif" }}>{exp.role}</h3>
-                        <p className="text-sm font-medium mb-4" style={{ color: "#00ADB5" }}>{exp.org}</p>
-                        <p className="text-base leading-relaxed mb-6" style={{ color: "#EEEEEE99" }}>{exp.desc}</p>
+                        <span className="text-xs font-bold mb-3 block" style={{ color: "var(--accent)" }}>{exp.year}</span>
+                        <h3 className="text-xl font-bold mb-1" style={{ fontFamily: "'Syne', sans-serif", color: "var(--text-heading)" }}>{exp.role}</h3>
+                        <p className="text-sm font-medium mb-4" style={{ color: "var(--accent)" }}>{exp.org}</p>
+                        <p className="text-base leading-relaxed mb-6" style={{ color: "var(--text-muted)" }}>{exp.desc}</p>
                         <div className="flex flex-wrap gap-2 justify-end">
                           {exp.tags?.map((tag, j) => <span key={j} className="tag">{tag}</span>)}
                         </div>
@@ -133,12 +150,12 @@ export function ExperienceSection() {
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="timeline-card p-8 rounded-3xl" 
-                        style={{ background: "#393E46", border: "1px solid rgba(0,173,181,0.1)" }}
+                        style={{ background: "var(--bg-card)", border: "1px solid var(--card-border)" }}
                       >
-                        <span className="text-xs font-bold mb-3 block" style={{ color: "#00ADB5" }}>{exp.year}</span>
-                        <h3 className="text-xl font-bold mb-1" style={{ fontFamily: "'Syne', sans-serif" }}>{exp.role}</h3>
-                        <p className="text-sm font-medium mb-4" style={{ color: "#00ADB5" }}>{exp.org}</p>
-                        <p className="text-base leading-relaxed mb-6" style={{ color: "#EEEEEE99" }}>{exp.desc}</p>
+                        <span className="text-xs font-bold mb-3 block" style={{ color: "var(--accent)" }}>{exp.year}</span>
+                        <h3 className="text-xl font-bold mb-1" style={{ fontFamily: "'Syne', sans-serif", color: "var(--text-heading)" }}>{exp.role}</h3>
+                        <p className="text-sm font-medium mb-4" style={{ color: "var(--accent)" }}>{exp.org}</p>
+                        <p className="text-base leading-relaxed mb-6" style={{ color: "var(--text-muted)" }}>{exp.desc}</p>
                         <div className="flex flex-wrap gap-2">
                           {exp.tags?.map((tag, j) => <span key={j} className="tag">{tag}</span>)}
                         </div>
@@ -152,7 +169,7 @@ export function ExperienceSection() {
         </div>
 
         <div className="mt-20 text-center">
-            <Link href="/user/experience" className="text-sm font-bold tracking-widest uppercase hover:text-white transition-colors" style={{ color: "#00ADB5" }}>
+            <Link href="/user/experience" className="text-sm font-bold tracking-widest uppercase transition-colors" style={{ color: "var(--accent)" }}>
                 Explore Full Experience →
             </Link>
         </div>
@@ -166,23 +183,24 @@ export function ExperienceSection() {
  */
 export default function PublicExperiencePage() {
   return (
-    <div style={{ background: "#222831", color: "#EEEEEE", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ background: "var(--bg-primary)", color: "var(--text-primary)", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
       <Navbar />
       
       <main className="pt-32 pb-24 px-6 max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-20">
-          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "#00ADB5" }}>Portfolio</p>
+          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "var(--accent)" }}>Portfolio</p>
           <h1 style={{
             fontFamily: "'Syne', sans-serif",
             fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
             fontWeight: 800,
             lineHeight: 1,
+            color: "var(--text-heading)"
           }}>
             Experience <br />
-            <span style={{ color: "#00ADB5" }}>Detail & Achievements</span>
+            <span style={{ color: "var(--accent)" }}>Detail & Achievements</span>
           </h1>
-          <p className="mt-8 text-lg max-w-2xl" style={{ color: "#EEEEEE99" }}>
+          <p className="mt-8 text-lg max-w-2xl" style={{ color: "var(--text-muted)" }}>
             A comprehensive list of my professional contributions, leadership roles, and technical achievements.
           </p>
         </div>
@@ -190,35 +208,35 @@ export default function PublicExperiencePage() {
         {/* Detailed List (No Tree) */}
         <div className="space-y-12">
           {experiences.map((exp, i) => (
-            <div key={i} className="group p-8 md:p-12 rounded-[2rem] transition-all duration-300 hover:bg-[#2c323c]" 
-                 style={{ background: "#393E46", border: "1px solid rgba(0,173,181,0.05)" }}>
+            <div key={i} className="group p-8 md:p-12 rounded-[2rem] transition-all duration-300" 
+                 style={{ background: "var(--bg-card)", border: "1px solid var(--card-border)" }}>
               <div className="flex flex-col md:flex-row justify-between items-start gap-8">
                 <div className="flex-1">
                   <div className="flex flex-wrap gap-3 mb-6">
-                    <span className="px-4 py-1.5 rounded-full text-xs font-bold" style={{ background: "rgba(0,173,181,0.1)", color: "#00ADB5" }}>
+                    <span className="px-4 py-1.5 rounded-full text-xs font-bold" style={{ background: "var(--accent-dim)", color: "var(--accent)" }}>
                       {exp.year}
                     </span>
                     {exp.tags?.map((tag, j) => (
-                      <span key={j} className="px-4 py-1.5 rounded-full text-xs font-medium border border-white/10" style={{ color: "#EEEEEE99" }}>
+                      <span key={j} className="px-4 py-1.5 rounded-full text-xs font-medium border border-white/10" style={{ color: "var(--text-muted)" }}>
                         {tag}
                       </span>
                     ))}
                   </div>
                   
-                  <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Syne', sans-serif" }}>{exp.role}</h2>
-                  <p className="text-xl font-medium mb-8" style={{ color: "#00ADB5" }}>{exp.org}</p>
+                  <h2 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Syne', sans-serif", color: "var(--text-heading)" }}>{exp.role}</h2>
+                  <p className="text-xl font-medium mb-8" style={{ color: "var(--accent)" }}>{exp.org}</p>
                   
                   <div className="grid md:grid-cols-2 gap-12">
                     <div>
-                      <h4 className="text-xs uppercase tracking-widest mb-4 font-bold" style={{ color: "#EEEEEE40" }}>About Role</h4>
-                      <p className="text-lg leading-relaxed" style={{ color: "#EEEEEECC" }}>{exp.desc}</p>
+                      <h4 className="text-xs uppercase tracking-widest mb-4 font-bold" style={{ color: "var(--text-muted)", opacity: 0.6 }}>About Role</h4>
+                      <p className="text-lg leading-relaxed" style={{ color: "var(--text-primary)", opacity: 0.8 }}>{exp.desc}</p>
                     </div>
                     <div>
-                      <h4 className="text-xs uppercase tracking-widest mb-4 font-bold" style={{ color: "#EEEEEE40" }}>Key Achievements</h4>
+                      <h4 className="text-xs uppercase tracking-widest mb-4 font-bold" style={{ color: "var(--text-muted)", opacity: 0.6 }}>Key Achievements</h4>
                       <ul className="space-y-3">
                         {exp.achievements?.map((ach, k) => (
-                          <li key={k} className="flex items-start gap-3 text-sm" style={{ color: "#EEEEEE99" }}>
-                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#00ADB5" }} />
+                          <li key={k} className="flex items-start gap-3 text-sm" style={{ color: "var(--text-muted)" }}>
+                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--accent)" }} />
                             {ach}
                           </li>
                         ))}
@@ -233,12 +251,12 @@ export default function PublicExperiencePage() {
 
         {/* CTA */}
         <div className="mt-32 p-12 rounded-[2.5rem] text-center relative overflow-hidden" 
-             style={{ background: "#1a1f26", border: "1px solid rgba(0,173,181,0.1)" }}>
-          <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[100px] opacity-20" style={{ background: "#00ADB5", transform: "translate(30%, -30%)" }} />
-          <h3 className="text-3xl font-bold mb-6" style={{ fontFamily: "'Syne', sans-serif" }}>Have a project in mind?</h3>
+             style={{ background: "var(--bg-secondary)", border: "1px solid var(--card-border)" }}>
+          <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[100px] opacity-20" style={{ background: "var(--accent)", transform: "translate(30%, -30%)" }} />
+          <h3 className="text-3xl font-bold mb-6" style={{ fontFamily: "'Syne', sans-serif", color: "var(--text-heading)" }}>Have a project in mind?</h3>
           <Link href="/user/contact" 
-                className="inline-block px-10 py-4 rounded-full font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(0,173,181,0.2)]"
-                style={{ background: "#00ADB5", color: "#222831" }}>
+                className="inline-block px-10 py-4 rounded-full font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_var(--accent-dim)]"
+                style={{ background: "var(--accent)", color: "var(--bg-primary)" }}>
             Let's Talk Together
           </Link>
         </div>
