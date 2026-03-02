@@ -35,7 +35,7 @@ const projectsData = [
       { name: 'Python', icon: 'python' },
       { name: 'OpenAI', icon: 'openai' },
       { name: 'HuggingFace', icon: 'huggingface' },
-      { name: 'FastAPI', icon: 'fastapi' },
+      // { name: 'FastAPI', icon: 'fastapi' },
     ],
     tags: ['AI / ML', 'LLM'],
     liveUrl: null,
@@ -132,7 +132,8 @@ export function ProjectsSection() {
   const featuredOnly = projectsData.filter(p => p.featured).slice(0, 3)
   
   return (
-    <section id="projects" className="max-w-6xl mx-auto px-6 py-20">
+    <section id="projects" className="max-w-6xl mx-auto px-6 py-20 relative overflow-hidden">
+      {/* <ProjectBackground /> */}
       <div className="flex items-end justify-between mb-12">
         <motion.div
            initial={{ opacity: 0, x: -20 }}
@@ -235,7 +236,8 @@ export default function PublicProjectsPage() {
   })
 
   return (
-    <div style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: "'DM Sans', sans-serif", minHeight: '100vh' }}>
+    <div className="relative overflow-hidden" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: "'DM Sans', sans-serif", minHeight: '100vh' }}>
+      {/* <ProjectBackground /> */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
         .tag { display:inline-block; padding:3px 12px; border-radius:999px; font-size:11px; font-weight:500; background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent-border); }

@@ -4,6 +4,34 @@ import React, { useState } from 'react'
 import { Navbar } from '@/components/user/Navbar'
 import Link from 'next/link'
 import Footer from '@/components/user/Footer'
+import { motion } from 'framer-motion'
+
+function BackgroundCircles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0 flex items-center justify-center">
+      {[...Array(5)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full border border-[var(--accent)] opacity-[0.03]"
+          style={{
+            width: `${(i + 1) * 250}px`,
+            height: `${(i + 1) * 250}px`,
+          }}
+          animate={{
+            scale: [1, 1.05, 1],
+            opacity: [0.05, 0.1, 0.05],
+          }}
+          transition={{
+            duration: 10 + i * 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+      <div className="absolute inset-0 bg-radial-[at_50%_50%] from-transparent via-transparent to-[var(--bg-primary)] opacity-80" />
+    </div>
+  );
+}
 
 const contactInfo = [
   {
@@ -288,7 +316,8 @@ function ContactForm() {
 // ── Named export for embedding in home page ────────────────────────────────
 export function ContactSection() {
   return (
-    <section id="contact" className="py-24 px-6" style={{ background: 'var(--bg-primary)' }}>
+    <section id="contact" className="py-24 px-6 relative overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
+      <BackgroundCircles />
       <style>{`
         .input-field:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 3px var(--accent-dim); }
       `}</style>
@@ -309,7 +338,8 @@ export function ContactSection() {
 // ── Default export for standalone /contact page ───────────────────────────
 export default function ContactPage() {
   return (
-    <div style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: "'DM Sans', sans-serif", minHeight: '100vh' }}>
+    <div className="relative overflow-hidden" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: "'DM Sans', sans-serif", minHeight: '100vh' }}>
+      <BackgroundCircles />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
         .input-field:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 3px var(--accent-dim); }

@@ -43,6 +43,93 @@ const experiences: Experience[] = [
   }
 ];
 
+// ── Background Effects ──────────────────────────────────────────────────────
+
+function Sparkles() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+  
+  if (!mounted) return null;
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full bg-[var(--accent)]"
+          style={{
+            width: Math.random() * 3 + 1 + 'px',
+            height: Math.random() * 3 + 1 + 'px',
+            top: Math.random() * 100 + '%',
+            left: Math.random() * 100 + '%',
+            boxShadow: '0 0 5px var(--accent)',
+          }}
+          animate={{
+            opacity: [0.1, 0.6, 0.1],
+            scale: [1, 1.5, 1],
+          }}
+          transition={{
+            duration: 2 + Math.random() * 3,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+            ease: "easeInOut"
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ExperienceBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0">
+      <Sparkles />
+      {/* Floating Beams */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute h-[2px] w-64 opacity-30"
+          style={{
+            top: `${15 + i * 15}%`,
+            left: '-20%',
+            background: 'linear-gradient(90deg, transparent, var(--accent), transparent)',
+            boxShadow: '0 0 8px var(--accent)',
+          }}
+          animate={{
+            left: ['-20%', '120%'],
+          }}
+          transition={{
+            duration: 7 + i * 2,
+            repeat: Infinity,
+            delay: i * 1.5,
+            ease: "linear"
+          }}
+        />
+      ))}
+      
+      {/* Vibrant Orbs */}
+      <motion.div
+        animate={{
+          x: [0, 80, 0],
+          y: [0, 50, 0],
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+        className="absolute top-1/4 -left-32 w-[500px] h-[500px] rounded-full blur-[130px] opacity-20"
+        style={{ background: 'var(--accent)' }}
+      />
+      <motion.div
+        animate={{
+          x: [0, -80, 0],
+          y: [0, 100, 0],
+        }}
+        transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+        className="absolute bottom-1/4 -right-32 w-[600px] h-[600px] rounded-full blur-[150px] opacity-15"
+        style={{ background: 'var(--accent-dim)' }}
+      />
+    </div>
+  );
+}
+
 // ── ANIMATION ─────────────────────────────────────────────────────────────
 
 const fadeUp: Variants = {
@@ -64,6 +151,7 @@ const fadeUp: Variants = {
 export function ExperienceSection() {
   return (
     <section id="experience" className="py-24 relative overflow-hidden" style={{ background: "var(--bg-primary)" }}>
+      <ExperienceBackground />
       <style>{`
         .timeline-card { transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease; }
         .timeline-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px var(--accent-dim); }
@@ -183,7 +271,8 @@ export function ExperienceSection() {
  */
 export default function PublicExperiencePage() {
   return (
-    <div style={{ background: "var(--bg-primary)", color: "var(--text-primary)", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="relative overflow-hidden" style={{ background: "var(--bg-primary)", color: "var(--text-primary)", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
+      <ExperienceBackground />
       <Navbar />
       
       <main className="pt-32 pb-24 px-6 max-w-6xl mx-auto">

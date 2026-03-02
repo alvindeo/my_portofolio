@@ -13,6 +13,92 @@ import Footer from "@/components/user/Footer";
 
 import { Code2, Server, Brain, Terminal } from "lucide-react";
 
+// ── Background Effects ──────────────────────────────────────────────────────
+
+function AnimatedBeams() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute h-[2px] w-64 opacity-30"
+          style={{
+            top: `${10 + i * 12}%`,
+            left: '-20%',
+            background: 'linear-gradient(90deg, transparent, var(--accent), transparent)',
+            boxShadow: '0 0 10px var(--accent)',
+          }}
+          animate={{
+            left: ['-20%', '120%'],
+          }}
+          transition={{
+            duration: 5 + i * 2,
+            repeat: Infinity,
+            delay: i * 2,
+            ease: "linear"
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function FloatingParticles() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  
+  if (!mounted) return null;
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            width: Math.random() * 4 + 2 + 'px',
+            height: Math.random() * 4 + 2 + 'px',
+            background: 'var(--accent)',
+            top: Math.random() * 100 + '%',
+            left: Math.random() * 100 + '%',
+            opacity: 0.1,
+          }}
+          animate={{
+            y: [0, -100, 0],
+            x: [0, Math.random() * 50 - 25, 0],
+            opacity: [0.1, 0.3, 0.1],
+          }}
+          transition={{
+            duration: 10 + Math.random() * 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function SectionDivider() {
+  return (
+    <div className="w-full h-[2px] relative overflow-hidden">
+      <div 
+        className="absolute inset-0 opacity-10"
+        style={{ background: 'var(--accent)' }}
+      />
+      <motion.div 
+        className="absolute inset-0 w-1/2 h-full"
+        style={{ 
+          background: 'linear-gradient(90deg, transparent, var(--accent), transparent)',
+        }}
+        animate={{ left: ['-100%', '200%'] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+      />
+    </div>
+  );
+}
+
+
 
 // ── Components ─────────────────────────────────────────────────────────────
 
@@ -156,7 +242,6 @@ export default function Home() {
             backgroundSize: "80px 80px",
           }}
         />
-        {/* Glow */}
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
           style={{
@@ -164,6 +249,10 @@ export default function Home() {
               "radial-gradient(circle, var(--hero-glow) 0%, transparent 70%)",
           }}
         />
+        
+        {/* Animated Background Effects */}
+        <AnimatedBeams />
+        <FloatingParticles />
 
         <motion.div 
           className="max-w-6xl mx-auto w-full relative z-10"
@@ -320,6 +409,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* ── ABOUT ── */}
+      <SectionDivider />
       <ScrollReveal>
         <section id="about">
           <AboutSection />
@@ -327,6 +417,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* ── SKILLS ── */}
+      <SectionDivider />
       <ScrollReveal>
         <section
           id="skills"
@@ -394,6 +485,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* ── PROJECTS ── */}
+      <SectionDivider />
       <ScrollReveal>
         <ProjectsSection />
       </ScrollReveal>
