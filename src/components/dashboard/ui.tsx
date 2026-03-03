@@ -173,14 +173,14 @@ export function Table({ headers, children, empty }: {
         <thead>
           <tr style={{ borderBottom: `1px solid ${tok.border}`, background: tok.bg }}>
             {headers.map((h) => (
-              <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap" style={{ color: tok.muted }}>{h}</th>
+              <th key={h} className="text-left px-3 sm:px-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap" style={{ color: tok.muted }}>{h}</th>
             ))}
           </tr>
         </thead>
         <tbody>{children}</tbody>
       </table>
       {empty && (
-        <div className="text-center py-16" style={{ color: tok.muted }}>
+        <div className="text-center py-16 px-4" style={{ color: tok.muted }}>
           <p className="text-3xl mb-2">📭</p>
           <p className="text-sm">No data yet. Add your first entry.</p>
         </div>
@@ -211,13 +211,13 @@ export function Tr({ children, onMouseEnter, onMouseLeave, index }: {
 
 export function Td({ children, muted }: { children: React.ReactNode; muted?: boolean }) {
   return (
-    <td className="px-4 py-3" style={{ color: muted ? tok.muted : tok.text }}>{children}</td>
+    <td className="px-3 sm:px-4 py-3" style={{ color: muted ? tok.muted : tok.text }}>{children}</td>
   )
 }
 
 export function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap" style={{ color: tok.muted }}>{children}</th>
+    <th className="px-3 sm:px-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap" style={{ color: tok.muted }}>{children}</th>
   )
 }
 
@@ -226,15 +226,18 @@ export function PageHeader({ title, sub, action }: {
   title: string; sub?: string; action?: React.ReactNode
 }) {
   return (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-bold" style={{ fontFamily: "'Syne', sans-serif", color: tok.heading }}>{title}</h1>
-        {sub && <p className="text-sm mt-1" style={{ color: tok.muted }}>{sub}</p>}
+        <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: "'Syne', sans-serif", color: tok.heading }}>{title}</h1>
+        {sub && <p className="text-xs sm:text-sm mt-1" style={{ color: tok.muted }}>{sub}</p>}
       </div>
-      {action}
+      <div className="flex shrink-0">
+        {action}
+      </div>
     </div>
   )
 }
+
 
 // ── Confirm delete dialog ─────────────────────────────────────────────────────
 export function ConfirmDelete({ open, onCancel, onConfirm, loading }: {

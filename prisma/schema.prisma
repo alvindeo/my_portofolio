@@ -17,17 +17,26 @@ model User {
 }
 
 model Project {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  imageUrl    String?
-  techStack   String[]
-  liveUrl     String?
-  githubUrl   String?
-  featured    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  title           String
+  tagline         String?
+  year            String?
+  imageUrl        String?
+  tags            String[]
+  techStack       String[]
+  techIcons       String[]
+  liveUrl         String?
+  githubUrl       String?
+  featured        Boolean  @default(false)
+  description     String
+  fullDescription String?
+  highlights      String[]
+  challenges      String?
+  outcome         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
+
 
 model About {
   id        String   @id @default(cuid())

@@ -313,141 +313,140 @@ function UserDropdown({ session, collapsed }: { session: { user?: { email?: stri
 }
 
 // ── Sidebar ──────────────────────────────────────────────────────────────────
-function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+function Sidebar({ collapsed, onToggle, isMobile }: { collapsed: boolean; onToggle: () => void; isMobile: boolean }) {
   const pathname         = usePathname()
   const { data: session } = useSession()
 
-  return (
-    <AnimatePresence>
-      {!collapsed && (
-        <motion.aside
-          key="sidebar"
-          initial={{ x: -240, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -240, opacity: 0 }}
-          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-          className="flex flex-col h-screen sticky top-0 border-r shrink-0 overflow-hidden"
-          style={{ width: 240, minWidth: 240, background: 'var(--bg-card)', borderColor: 'var(--card-border)' }}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.3 }}
-            className="flex items-center px-4 border-b"
-            style={{ borderColor: 'var(--card-border)', minHeight: 64 }}
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0" style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>A</div>
-              <div>
-                <p className="text-sm font-bold" style={{ color: 'var(--text-heading)' }}>Portfolio</p>
-                <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Admin Panel</p>
-              </div>
-            </div>
-          </motion.div>
+  const sidebarWidth = 240
 
-          {/* Search */}
+  const content = (
+    <motion.aside
+      key="sidebar"
+      initial={isMobile ? { x: -sidebarWidth } : { width: 0, opacity: 0 }}
+      animate={isMobile ? { x: collapsed ? -sidebarWidth : 0 } : { width: collapsed ? 0 : sidebarWidth, opacity: collapsed ? 0 : 1 }}
+      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+      className={`flex flex-col h-screen sticky top-0 border-r shrink-0 overflow-hidden ${isMobile ? 'fixed z-50 shadow-2xl' : ''}`}
+      style={{ 
+        width: sidebarWidth, 
+        minWidth: isMobile ? undefined : (collapsed ? 0 : sidebarWidth), 
+        background: 'var(--bg-card)', 
+        borderColor: 'var(--card-border)' 
+      }}
+    >
+      <motion.div
+        className="flex items-center px-4 border-b"
+        style={{ borderColor: 'var(--card-border)', minHeight: 64 }}
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0" style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>A</div>
+          <div>
+            <p className="text-sm font-bold" style={{ color: 'var(--text-heading)' }}>Portfolio</p>
+            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Admin Panel</p>
+          </div>
+        </div>
+        {isMobile && (
+          <button onClick={onToggle} className="ml-auto p-2" style={{ color: 'var(--text-muted)' }}>
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
+          </button>
+        )}
+      </motion.div>
+
+      {/* Search */}
+      <div className="px-3 py-3 border-b" style={{ borderColor: 'var(--card-border)' }}>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: 'var(--bg-primary)', border: '1px solid var(--card-border)' }}>
+          <Icon d={icons.search} size={13} />
+          <input placeholder="Search items..." className="bg-transparent text-xs outline-none flex-1 min-w-0" style={{ color: 'var(--text-primary)' }} />
+        </div>
+      </div>
+
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
+        <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Main Menu</p>
+        {navItems.map((item) => {
+          const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => isMobile && onToggle()}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+              style={{
+                background: active ? 'var(--accent-dim)' : 'transparent',
+                color: active ? 'var(--accent)' : 'var(--text-muted)',
+                border: active ? '1px solid var(--accent-border)' : '1px solid transparent',
+              }}
+            >
+              <span className="shrink-0"><Icon d={item.icon} size={16} /></span>
+              <span>{item.label}</span>
+            </Link>
+          )
+        })}
+      </nav>
+
+      {/* User section */}
+      <div className="border-t p-2" style={{ borderColor: 'var(--card-border)' }}>
+        <UserDropdown session={session} collapsed={false} />
+      </div>
+    </motion.aside>
+  )
+
+  return (
+    <>
+      <AnimatePresence>
+        {isMobile && !collapsed && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.15, duration: 0.3 }}
-            className="px-3 py-3 border-b"
-            style={{ borderColor: 'var(--card-border)' }}
-          >
-            <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: 'var(--bg-primary)', border: '1px solid var(--card-border)' }}>
-              <Icon d={icons.search} size={13} />
-              <input placeholder="Search items..." className="bg-transparent text-xs outline-none flex-1 min-w-0" style={{ color: 'var(--text-primary)' }} />
-            </div>
-          </motion.div>
-
-          {/* Nav */}
-          <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
-            <p className="px-3 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Main Menu</p>
-            {navItems.map((item, idx) => {
-              const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
-              return (
-                <motion.div
-                  key={item.href}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + idx * 0.05, duration: 0.25, ease: 'easeOut' }}
-                >
-                  <Link
-                    href={item.href}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
-                    style={{
-                      background: active ? 'var(--accent-dim)' : 'transparent',
-                      color: active ? 'var(--accent)' : 'var(--text-muted)',
-                      border: active ? '1px solid var(--accent-border)' : '1px solid transparent',
-                    }}
-                  >
-                    <span className="shrink-0"><Icon d={item.icon} size={16} /></span>
-                    <span>{item.label}</span>
-                  </Link>
-                </motion.div>
-              )
-            })}
-          </nav>
-
-          {/* User section */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.3 }}
-            className="border-t p-2"
-            style={{ borderColor: 'var(--card-border)' }}
-          >
-            <UserDropdown session={session} collapsed={false} />
-          </motion.div>
-
-        </motion.aside>
-      )}
-    </AnimatePresence>
+            exit={{ opacity: 0 }}
+            onClick={onToggle}
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+      {isMobile ? (
+        <AnimatePresence>{!collapsed && content}</AnimatePresence>
+      ) : content}
+    </>
   )
 }
 
 // ── Topbar ────────────────────────────────────────────────────────────────────
-function Topbar({ breadcrumb, onToggle, collapsed }: { breadcrumb: string[]; onToggle: () => void; collapsed: boolean }) {
+function Topbar({ breadcrumb, onToggle, collapsed, isMobile }: { breadcrumb: string[]; onToggle: () => void; collapsed: boolean; isMobile: boolean }) {
   return (
-    <motion.header
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+    <header
       className="flex items-center gap-3 px-4 border-b"
       style={{ background: 'var(--bg-card)', borderColor: 'var(--card-border)', height: 64, position: 'sticky', top: 0, zIndex: 10 }}
     >
-      <motion.button
+      <button
         onClick={onToggle}
-        title={collapsed ? 'Open sidebar' : 'Close sidebar'}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.92 }}
         className="p-2 rounded-xl transition-colors shrink-0"
         style={{ color: 'var(--text-muted)', background: 'var(--bg-primary)', border: '1px solid var(--card-border)' }}
       >
-        <PanelIcon collapsed={collapsed} />
-      </motion.button>
+        {isMobile ? (
+           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+        ) : (
+          <PanelIcon collapsed={collapsed} />
+        )}
+      </button>
 
-      <nav className="flex items-center gap-1.5 text-sm" style={{ color: 'var(--text-muted)' }}>
-        {breadcrumb.map((crumb, i) => (
+      <nav className="flex items-center gap-1.5 text-sm overflow-hidden whitespace-nowrap" style={{ color: 'var(--text-muted)' }}>
+        {!isMobile && breadcrumb.map((crumb, i) => (
           <React.Fragment key={i}>
             {i > 0 && <span className="mx-0.5">/</span>}
-            <motion.span
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * i, duration: 0.25 }}
-              style={{ color: i === breadcrumb.length - 1 ? 'var(--text-heading)' : undefined, fontWeight: i === breadcrumb.length - 1 ? 700 : 400 }}
-            >
+            <span style={{ color: i === breadcrumb.length - 1 ? 'var(--text-heading)' : undefined, fontWeight: i === breadcrumb.length - 1 ? 700 : 400 }}>
               {crumb}
-            </motion.span>
+            </span>
           </React.Fragment>
         ))}
+        {isMobile && <span className="font-bold truncate" style={{ color: 'var(--text-heading)' }}>{breadcrumb[breadcrumb.length - 1]}</span>}
       </nav>
 
       <div className="flex-1" />
-      <Link href="/" className="text-xs px-3 py-1.5 rounded-xl border font-medium transition-all hover:opacity-80"
+      <Link href="/" className="text-[10px] sm:text-xs px-2.5 py-1.5 rounded-xl border font-medium transition-all hover:opacity-80 shrink-0"
         style={{ color: 'var(--text-muted)', borderColor: 'var(--card-border)' }}>
-        View Site →
+        {isMobile ? 'Exit' : 'View Site'} →
       </Link>
-    </motion.header>
+    </header>
   )
 }
 
@@ -456,20 +455,32 @@ export function DashboardShell({ children, title, breadcrumb }: {
   children: React.ReactNode; title: string; breadcrumb: string[]
 }) {
   const [collapsed, setCollapsed] = useState(false)
+  const [isMobile, setIsMobile]   = useState(false)
+
+  useEffect(() => {
+    const check = () => {
+      const mobile = window.innerWidth < 1024
+      setIsMobile(mobile)
+      if (mobile) setCollapsed(true)
+      else setCollapsed(false)
+    }
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: "'DM Sans', sans-serif" }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');`}</style>
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} isMobile={isMobile} />
       <div className="flex-1 flex flex-col min-w-0">
-        <Topbar breadcrumb={breadcrumb} onToggle={() => setCollapsed(!collapsed)} collapsed={collapsed} />
-        {/* Page content fades in fresh on each render */}
+        <Topbar breadcrumb={breadcrumb} onToggle={() => setCollapsed(!collapsed)} collapsed={collapsed} isMobile={isMobile} />
         <motion.main
           key={breadcrumb.join('/')}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="flex-1 overflow-auto p-6"
+          className="flex-1 overflow-auto p-4 sm:p-6"
         >
           {children}
         </motion.main>
@@ -477,3 +488,4 @@ export function DashboardShell({ children, title, breadcrumb }: {
     </div>
   )
 }
+
