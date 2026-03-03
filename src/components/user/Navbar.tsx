@@ -48,6 +48,7 @@ export function Navbar() {
 
   return (
     <nav
+      ref={menuRef}
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
         background:
@@ -65,7 +66,7 @@ export function Navbar() {
         style={{ scaleX: scrollYProgress, background: "var(--accent)" }}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between" ref={menuRef}>
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         
         {/* Logo */}
         <Link
