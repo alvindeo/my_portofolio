@@ -5,11 +5,13 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  name      String?
   password  String
   createdAt DateTime @default(now())
 }
@@ -30,11 +32,18 @@ model Project {
 model About {
   id        String   @id @default(cuid())
   name      String
-  bio       String
+  title     String?
+  bio       String?
+  bio2      String?
+  bio3      String?
+  bio4      String?
   photoUrl  String?
   email     String?
   phone     String?
   location  String?
+  github    String?
+  linkedin  String?
+  cvUrl     String?
   updatedAt DateTime @updatedAt
 }
 
@@ -43,26 +52,40 @@ model Skill {
   name     String
   category String
   level    Int
+  icon     String?
 }
 
 model Experience {
-  id          String   @id @default(cuid())
-  company     String
-  position    String
-  description String
-  startDate   DateTime
-  endDate     DateTime?
-  current     Boolean  @default(false)
+  id           String  @id @default(cuid())
+  company      String
+  role         String
+  description  String
+  period       String
+  tags         String
+  achievements String
 }
 
+
 model Education {
-  id          String   @id @default(cuid())
-  institution String
+  id          String  @id @default(cuid())
   degree      String
+  institution String
   field       String
-  startDate   DateTime
-  endDate     DateTime?
+  period      String
+  description String
   gpa         String?
+  imageUrl    String?
+  location    String?
+}
+
+model Certificate {
+  id        String   @id @default(cuid())
+  title     String
+  issuer    String
+  year      String
+  imageUrl  String?
+  url       String?
+  createdAt DateTime @default(now())
 }
 
 model Contact {

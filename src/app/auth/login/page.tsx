@@ -8,7 +8,7 @@ import { useTheme } from "@/context/ThemeContext";
 
 // ── Time-based image logic ──
 const images = [
-  { src: '/login/biasa.jng', label: 'Pagi',},
+  { src: '/login/biasa.jpg', label: 'Pagi',},
   { src: '/login/marah.png', label: 'Siang',},
   { src: '/login/sasuke.png', label: 'Malam',},
 ];

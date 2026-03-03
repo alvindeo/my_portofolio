@@ -135,14 +135,6 @@ function useCounter(end: number, duration = 1500, start = false) {
   return count;
 }
 
-// ── Data ───────────────────────────────────────────────────────────────────
-const skills = [
-  { category: 'Frontend', icon: <Code2 size={20} />, items: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Figma'] },
-  { category: 'Backend', icon: <Server size={20} />, items: ['Python', 'Laravel', 'Node.js', 'REST API', 'PostgreSQL'] },
-  { category: 'AI / ML', icon: <Brain size={20} />, items: ['YOLOv8', 'RAG', 'LLM APIs', 'Computer Vision', 'Machine Learning'] },
-  { category: 'Tools', icon: <Terminal size={20} />, items: ['Git', 'Docker', 'VS Code', 'Postman'] },
-]
-
 // ── Typewriter Hook ──────────────────────────────────────────────────────
 function useTypewriter(text: string, speed = 100, delay = 1000) {
   const [index, setIndex] = useState(0);
@@ -180,13 +172,16 @@ export default function Home() {
   const [statsVisible, setStatsVisible] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
 
+  const [dbStats, setDbStats] = useState({ projects: 10, experience: 3, skills: 15 });
+  const [dbSkills, setDbSkills] = useState<{category: string, items: string[]}[]>([]);
+
   const fullName = useTypewriter("Alvin Deo Ardiansyah", 120, 500);
   const part1 = fullName.slice(0, 9);
   const part2 = fullName.slice(9).trim();
 
-  const projects_count = useCounter(10, 1200, statsVisible);
-  const experience_count = useCounter(3, 1200, statsVisible);
-  const tech_count = useCounter(15, 1200, statsVisible);
+  const projects_count = useCounter(dbStats.projects, 1200, statsVisible);
+  const experience_count = useCounter(dbStats.experience, 1200, statsVisible);
+  const tech_count = useCounter(dbStats.skills, 1200, statsVisible);
 
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -199,6 +194,53 @@ export default function Home() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   useEffect(() => {
+    const fetchData = async () => {
+       try {
+          const [pRes, eRes, sRes] = await Promise.all([
+             fetch('/api/projects'),
+             fetch('/api/experience'),
+             fetch('/api/skills')
+          ]);
+          
+          let pCount = 0;
+          if (pRes.ok) {
+             const data = await pRes.json();
+             pCount = Array.isArray(data) ? data.length : 0;
+          }
+
+          let eYear = 2; // Default fallback
+          if (eRes.ok) {
+             const data = await eRes.json();
+             eYear = Array.isArray(data) ? data.length : 2;
+          }
+
+          let sCount = 0;
+          let grouped: {category: string, items: string[]}[] = [];
+          if (sRes.ok) {
+             const data = await sRes.json();
+             if (Array.isArray(data)) {
+                sCount = data.length;
+                const map: Record<string, string[]> = {};
+                data.forEach(s => {
+                   map[s.category] = [...(map[s.category] ?? []), s.name];
+                });
+                grouped = Object.entries(map).map(([cat, items]) => ({ category: cat, items }));
+             }
+          }
+
+          setDbStats({ 
+             projects: pCount || 10, 
+             experience: eYear || 3, 
+             skills: sCount || 15 
+          });
+          if (grouped.length > 0) setDbSkills(grouped);
+
+       } catch (err) {
+          console.error("Home fetch error:", err);
+       }
+    }
+    fetchData();
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         setStatsVisible(entry.isIntersecting);
@@ -208,6 +250,21 @@ export default function Home() {
     if (statsRef.current) observer.observe(statsRef.current);
     return () => observer.disconnect();
   }, []);
+
+  const displaySkills = dbSkills.length > 0 ? dbSkills : [
+    { category: 'Frontend', items: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Figma'] },
+    { category: 'Backend', items: ['Python', 'Laravel', 'Node.js', 'REST API', 'PostgreSQL'] },
+    { category: 'AI / ML', items: ['YOLOv8', 'RAG', 'LLM APIs', 'Computer Vision', 'Machine Learning'] },
+    { category: 'Tools', items: ['Git', 'Docker', 'VS Code', 'Postman'] },
+  ];
+
+  const getCatIcon = (cat: string) => {
+     const c = cat.toLowerCase();
+     if (c.includes('front')) return <Code2 size={20} />;
+     if (c.includes('back')) return <Server size={20} />;
+     if (c.includes('ai') || c.includes('learn')) return <Brain size={20} />;
+     return <Terminal size={20} />;
+  }
 
   return (
     <div
@@ -300,53 +357,29 @@ export default function Home() {
             Software Engineer <span className="mx-2 opacity-30">/</span> ML Enthusiast
           </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-8 max-w-xl text-lg leading-relaxed"
-            style={{ color: "var(--text-muted)" }}
-          >
-            Informatics student crafting elegant digital experiences through clean code and intelligent systems.
-          </motion.p>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-12 flex flex-wrap gap-6"
+            className="mt-12 flex flex-wrap gap-4"
           >
-            <a
-              href="#projects"
-              className="px-8 py-4 rounded-full font-bold text-sm transition-all duration-300 hover:-translate-y-1 active:scale-95"
+            <Link
+              href="/#projects"
+              className="px-8 py-4 rounded-full font-bold text-sm transition-all duration-300 hover:scale-105 active:scale-95"
               style={{
                 background: "var(--accent)",
                 color: "var(--bg-primary)",
-                boxShadow: "0 0 0 0 var(--accent-glow)",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 20px var(--accent-glow)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 0 var(--accent-glow)";
+                boxShadow: "0 10px 30px var(--accent-glow)",
               }}
             >
-              Explore Work
-            </a>
+              View My Work
+            </Link>
             <a
               href="#contact"
-              className="px-8 py-4 rounded-full font-bold text-sm border-2 transition-all duration-300 hover:-translate-y-1 active:scale-95"
+              className="px-8 py-4 rounded-full font-bold text-sm border transition-all duration-300 hover:bg-white/5"
               style={{
                 borderColor: "var(--btn-outline-border)",
                 color: "var(--btn-outline-text)",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "var(--accent-dim)";
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--accent-border)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--btn-outline-border)";
               }}
             >
               Get in Touch
@@ -381,7 +414,7 @@ export default function Home() {
           <div className="grid grid-cols-3 gap-6">
             {[
               { value: projects_count, suffix: "+", label: "Projects Built" },
-              { value: experience_count, suffix: "+", label: "Years Learning" },
+              { value: experience_count, suffix: "+", label: "Experience" },
               { value: tech_count, suffix: "+", label: "Technologies" },
             ].map((stat, i) => (
               <div
@@ -443,7 +476,7 @@ export default function Home() {
               Technologies I work with
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {skills.map((group, i) => (
+              {displaySkills.map((group, i) => (
                 <div
                   key={i}
                   className="p-6 rounded-2xl card-hover"
@@ -452,27 +485,33 @@ export default function Home() {
                     border: "1px solid var(--card-border)",
                   }}
                 >
-                  <div className="flex items-center gap-3 mb-5">
-                    <div 
-                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ 
-                        background: "var(--accent-dim)", 
-                        border: "1px solid var(--accent-border)",
-                        color: "var(--accent)"
-                      }}
-                    >
-                      {group.icon}
-                    </div>
-                    <p
-                      className="text-xs font-semibold tracking-widest uppercase"
-                      style={{ color: "var(--accent)" }}
-                    >
-                      {group.category}
-                    </p>
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center mb-6"
+                    style={{
+                      background: "var(--accent-dim)",
+                      color: "var(--accent)",
+                      border: "1px solid var(--accent-border)",
+                    }}
+                  >
+                    {getCatIcon(group.category)}
                   </div>
+                  <h3
+                    className="text-lg font-bold mb-4"
+                    style={{ fontFamily: "'Syne', sans-serif" }}
+                  >
+                    {group.category}
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {group.items.map((item, j) => (
-                      <span key={j} className="tag">
+                      <span
+                        key={j}
+                        className="px-3 py-1 rounded-full text-xs font-medium"
+                        style={{
+                          background: "var(--bg-secondary)",
+                          border: "1px solid var(--card-border)",
+                          color: "var(--text-muted)",
+                        }}
+                      >
                         {item}
                       </span>
                     ))}
@@ -486,21 +525,22 @@ export default function Home() {
 
       {/* ── PROJECTS ── */}
       <SectionDivider />
-      <ScrollReveal>
+      <section id="projects">
         <ProjectsSection />
-      </ScrollReveal>
+      </section>
 
       {/* ── EXPERIENCE ── */}
-      <ScrollReveal>
+      <SectionDivider />
+      <section id="experience">
         <ExperienceSection />
-      </ScrollReveal>
+      </section>
 
       {/* ── CONTACT ── */}
-      <ScrollReveal>
+      <SectionDivider />
+      <section id="contact">
         <ContactSection />
-      </ScrollReveal>
+      </section>
 
-      {/* ── FOOTER ── */}
       <Footer />
     </div>
   );

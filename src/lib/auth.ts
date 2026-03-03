@@ -27,7 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!valid) return null;
 
-        return { id: user.id, email: user.email };
+        return { id: user.id, email: user.email, name: (user as { name?: string | null }).name ?? user.email };
       },
     }),
   ],
@@ -36,4 +36,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.name  = user.name
+        token.email = user.email
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.name  = (token.name  as string) ?? null
+        session.user.email = (token.email as string) ?? null
+      }
+      return session
+    },
+  },
 });
