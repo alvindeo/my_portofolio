@@ -201,7 +201,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, x: 0 }} 
                 viewport={{ once: true }} 
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative w-56 h-72 md:w-72 md:h-80 flex-shrink-0 mx-auto md:mx-0"
+                className="relative w-48 h-56 md:w-56 md:h-64 flex-shrink-0 mx-auto md:mx-0"
               >
                 <div className="absolute inset-0 rounded-3xl" style={{ background: 'var(--bg-secondary)', transform: 'rotate(6deg) translate(12px, 12px)', border: '1px solid var(--card-border)' }} />
                 <div className="absolute inset-0 rounded-3xl" style={{ background: 'var(--bg-card)', transform: 'rotate(3deg) translate(6px, 6px)', border: '1px solid var(--accent-border)' }} />
@@ -221,7 +221,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
                 className="flex-1"
               >
-                <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(2.2rem, 6vw, 3.8rem)', fontWeight: 800, lineHeight: 1.1, color: 'var(--text-heading)' }}>
+                <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 800, lineHeight: 1.1, color: 'var(--text-heading)' }}>
                   {about?.name || "Alvin Deo Ardiansyah"}
                 </h1>
                 <p className="mt-4 text-base font-bold tracking-widest uppercase" style={{ color: 'var(--accent)' }}>
