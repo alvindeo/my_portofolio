@@ -6,6 +6,9 @@ import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from '@/context/ThemeContext'
 import { motion, AnimatePresence } from 'framer-motion'
+import useSWR, { mutate } from 'swr'
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 // ── SVG Icon helper ──────────────────────────────────────────────────────────
 function Icon({ d, size = 16 }: { d: string | string[]; size?: number }) {
@@ -81,17 +84,14 @@ interface ContactMsg {
 
 // ── Notification Bell ─────────────────────────────────────────────────────────
 function NotificationBell() {
-  const [msgs, setMsgs]     = useState<ContactMsg[]>([])
   const [open, setOpen]     = useState(false)
   const ref                 = useRef<HTMLDivElement>(null)
 
-  const fetchMsgs = () =>
-    fetch('/api/contact').then(r => r.json()).then((d: ContactMsg[]) => { if (Array.isArray(d)) setMsgs(d) }).catch(() => {})
-
-  useEffect(() => { fetchMsgs() }, [])
-
-  // Poll every 30s for new messages
-  useEffect(() => { const id = setInterval(fetchMsgs, 30000); return () => clearInterval(id) }, [])
+  // Real-time fetching using SWR: polling setiap 10 detik + refresh on focus
+  const { data: msgs = [] } = useSWR<ContactMsg[]>('/api/contact', fetcher, {
+    refreshInterval: 10000, // Sync setiap 10 detik
+    revalidateOnFocus: true,
+  })
 
   useEffect(() => {
     const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
@@ -103,12 +103,12 @@ function NotificationBell() {
 
   const markRead = async (id: string) => {
     await fetch(`/api/contact/${id}`, { method: 'PATCH' })
-    setMsgs(prev => prev.map(m => m.id === id ? { ...m, isRead: true } : m))
+    mutate('/api/contact') // Trigger instant update di semua komponen yang pakai SWR
   }
 
   const markAllRead = async () => {
     await Promise.all(unread.map(m => fetch(`/api/contact/${m.id}`, { method: 'PATCH' })))
-    setMsgs(prev => prev.map(m => ({ ...m, isRead: true })))
+    mutate('/api/contact')
   }
 
   const formatTime = (iso: string) => {
@@ -124,7 +124,7 @@ function NotificationBell() {
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => { setOpen(!open); if (!open) fetchMsgs() }}
+        onClick={() => setOpen(!open)}
         className="relative p-2 rounded-xl transition-all hover:opacity-80"
         style={{ color: 'var(--text-muted)', background: 'var(--bg-primary)', border: '1px solid var(--card-border)' }}
       >

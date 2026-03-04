@@ -5,6 +5,9 @@ import Link from "next/link";
 import { Navbar } from "@/components/user/Navbar";
 import Footer from "@/components/user/Footer";
 import { motion, type Variants } from "framer-motion";
+import useSWR from 'swr'
+
+const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 // ── TYPES ─────────────────────────────────────────────────────────────────────
 interface Experience {
@@ -154,16 +157,10 @@ function AccordionExperienceCard({ exp, index }: { exp: Experience; index: numbe
 
 // ── SECTION (dipakai dari Home Page) ─────────────────────────────────────────
 export function ExperienceSection() {
-  const [items, setItems] = useState<Experience[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/experience')
-      .then((r) => r.json())
-      .then((d) => { if (Array.isArray(d)) setItems(d.slice(0, 2).map(dbToExp)) })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: dbItems = [], isLoading } = useSWR<DbExperience[]>('/api/experience', fetcher, {
+    refreshInterval: 12000
+  })
+  const items = dbItems.slice(0, 2).map(dbToExp)
 
   return (
     <section id="experience" className="py-24 relative overflow-hidden" style={{ background: "var(--bg-primary)" }}>
@@ -189,7 +186,7 @@ export function ExperienceSection() {
           </h2>
         </div>
 
-        {loading ? (
+        {isLoading ? (
           <div className="space-y-6">{[0, 1].map(i => <ExperienceSkeleton key={i} />)}</div>
         ) : items.length === 0 ? (
           <EmptyExperience />
@@ -247,16 +244,10 @@ export function ExperienceSection() {
 
 // ── FULL PAGE ─────────────────────────────────────────────────────────────────
 export default function PublicExperiencePage() {
-  const [items, setItems] = useState<Experience[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/experience')
-      .then((r) => r.json())
-      .then((d) => { if (Array.isArray(d)) setItems(d.map(dbToExp)) })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: dbItems = [], isLoading } = useSWR<DbExperience[]>('/api/experience', fetcher, {
+    refreshInterval: 12000
+  })
+  const items = dbItems.map(dbToExp)
 
   return (
     <div className="relative overflow-hidden" style={{ background: "var(--bg-primary)", color: "var(--text-primary)", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif" }}>
@@ -275,7 +266,7 @@ export default function PublicExperiencePage() {
           </p>
         </div>
 
-        {loading ? (
+        {isLoading ? (
           <div className="space-y-6">{[0, 1, 2].map(i => <ExperienceSkeleton key={i} />)}</div>
         ) : items.length === 0 ? (
           <EmptyExperience />

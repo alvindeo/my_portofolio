@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import { DashboardShell } from '@/components/dashboard/DashboardShell'
 import { motion, AnimatePresence } from 'framer-motion'
+import useSWR, { mutate } from 'swr'
+
+const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 interface Contact {
   id: string
@@ -22,23 +25,16 @@ function formatDate(iso: string) {
 }
 
 export default function InboxPage() {
-  const [msgs, setMsgs]         = useState<Contact[]>([])
-  const [loading, setLoading]   = useState(true)
   const [selected, setSelected] = useState<Contact | null>(null)
   const [filter, setFilter]     = useState<'all' | 'unread'>('all')
 
-  const fetchMsgs = () =>
-    fetch('/api/contact').then(r => r.json())
-      .then(d => { if (Array.isArray(d)) setMsgs(d) })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-
-  useEffect(() => { fetchMsgs() }, [])
+  const { data: msgs = [], isLoading } = useSWR<Contact[]>('/api/contact', fetcher, {
+    refreshInterval: 5000, // Cek data baru setiap 5 detik di halaman inbox
+  })
 
   const markRead = async (id: string) => {
     await fetch(`/api/contact/${id}`, { method: 'PATCH' })
-    setMsgs(prev => prev.map(m => m.id === id ? { ...m, isRead: true } : m))
-    setSelected(prev => prev?.id === id ? { ...prev, isRead: true } : prev)
+    mutate('/api/contact')
   }
 
   const handleOpen = (msg: Contact) => {
@@ -78,7 +74,7 @@ export default function InboxPage() {
 
           {/* List */}
           <div className="flex-1 overflow-y-auto">
-            {loading ? (
+            {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="flex gap-3 px-4 py-3 border-b animate-pulse" style={{ borderColor: 'var(--card-border)' }}>
                   <div className="w-9 h-9 rounded-full shrink-0" style={{ background: 'var(--bg-secondary)' }} />

@@ -4,7 +4,11 @@ import React, { useState, useEffect } from 'react'
 import { Navbar } from '@/components/user/Navbar'
 import Footer from '@/components/user/Footer'
 import Link from 'next/link'
-import { motion, type Variants } from 'framer-motion'
+import { motion, type Variants, AnimatePresence } from 'framer-motion'
+import { SafeStackIcon } from "@/components/ui/SafeStackIcon";
+import useSWR from 'swr'
+
+const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 // ── TYPES ─────────────────────────────────────────────────────────────────────
 interface Project {
@@ -124,19 +128,13 @@ export function ProjectsSection() {
 }
 
 // ── FULL PAGE ─────────────────────────────────────────────────────────────────
-export default function PublicProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
+export default function ProjectsPage() {
   const [search, setSearch] = useState('')
   const [activeTag, setActiveTag] = useState('All')
 
-  useEffect(() => {
-    fetch('/api/projects')
-      .then(r => r.json())
-      .then(d => { if (Array.isArray(d)) setProjects(d) })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: projects = [], isLoading } = useSWR<Project[]>('/api/projects', fetcher, {
+    refreshInterval: 10000, // Sync setiap 10 detik agar pengunjung melihat info terbaru
+  })
 
   // Build tag list dynamically from DB data
   const allTags = ['All', ...Array.from(new Set(projects.flatMap((p) => p.techStack ?? [])))]
@@ -171,16 +169,24 @@ export default function PublicProjectsPage() {
       </section>
 
       {/* ── FILTER ── */}
-      {!loading && projects.length > 0 && (
+      {!isLoading && projects.length > 0 && (
         <section className="pb-10 px-6">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-            <div className="relative flex-1 max-w-sm">
-              <input type="text" placeholder="Search projects..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-4 pr-4 py-3 rounded-xl text-sm outline-none transition-all" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--card-border)' }} />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {allTags.map((tag) => (
-                <button key={tag} onClick={() => setActiveTag(tag)} className="px-4 py-2 rounded-full text-xs font-medium transition-all" style={{ background: activeTag === tag ? 'var(--accent)' : 'var(--bg-card)', color: activeTag === tag ? 'var(--bg-primary)' : 'var(--text-muted)', border: activeTag === tag ? '1px solid var(--accent)' : '1px solid var(--card-border)' }}>{tag}</button>
-              ))}
+          <div className="max-w-6xl mx-auto">
+            {/* Header content: tags, search, dll */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
+              <div className="flex flex-wrap gap-2">
+                {!isLoading && allTags.map((tag) => (
+                  <button key={tag} onClick={() => setActiveTag(tag)}
+                    className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${activeTag === tag ? "bg-white text-black scale-105" : "bg-white/5 text-white/50 hover:bg-white/10"}`}>
+                    {tag}
+                  </button>
+                ))}
+              </div>
+              <div className="relative group w-full md:w-80">
+                <input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search project name..."
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-sm outline-none focus:border-[var(--accent)] transition-all" />
+                <svg className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30 group-focus-within:opacity-100 transition-opacity" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              </div>
             </div>
           </div>
         </section>
@@ -189,7 +195,7 @@ export default function PublicProjectsPage() {
       {/* ── GRID ── */}
       <section className="pb-24 px-6">
         <div className="max-w-6xl mx-auto">
-          {loading ? (
+          {isLoading ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[0,1,2,3,4,5].map(i => <ProjectSkeleton key={i} />)}
             </div>
