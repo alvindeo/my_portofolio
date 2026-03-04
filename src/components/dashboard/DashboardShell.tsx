@@ -74,6 +74,7 @@ const navItems = [
   { label: 'Education',  href: '/dashboard/education',  icon: icons.education  },
   { label: 'Certificates', href: '/dashboard/certificates', icon: icons.certificate },
   { label: 'Inbox',      href: '/dashboard/inbox',      icon: icons.mail       },
+  { label: 'Profile',    href: '/dashboard/profile',    icon: icons.user       },
 ]
 
 // ── Contact type ─────────────────────────────────────────────────────────────
@@ -210,147 +211,16 @@ function NotificationBell() {
   )
 }
 
-// ── Profile Modal ─────────────────────────────────────────────────────────────
-function ProfileModal({ open, onClose, userEmail }: { open: boolean; onClose: () => void; userEmail: string }) {
-  const [name, setName]           = useState('')
-  const [currentPw, setCurrentPw] = useState('')
-  const [newPw, setNewPw]         = useState('')
-  const [showCur, setShowCur]     = useState(false)
-  const [showNew, setShowNew]     = useState(false)
-  const [saving, setSaving]       = useState(false)
-  const [msg, setMsg]             = useState<{ text: string; ok: boolean } | null>(null)
-  const [tab, setTab]             = useState<'name' | 'password'>('name')
-
-  if (!open) return null
-
-  const handleSave = async () => {
-    setSaving(true); setMsg(null)
-    const body: Record<string, string> = {}
-    if (tab === 'name' && name) body.name = name
-    if (tab === 'password') { body.currentPassword = currentPw; body.newPassword = newPw }
-
-    const res = await fetch('/api/admin/profile', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
-    if (res.ok) { setMsg({ text: 'Saved successfully!', ok: true }); setCurrentPw(''); setNewPw('') }
-    else { const j = await res.json(); setMsg({ text: j.error ?? 'Failed to save.', ok: false }) }
-    setSaving(false)
-  }
-
-  const inputStyle: React.CSSProperties = {
-    background: 'var(--bg-primary)', color: 'var(--text-primary)',
-    border: '1px solid var(--card-border)', borderRadius: 10,
-    padding: '10px 12px', width: '100%', fontSize: 14, outline: 'none', fontFamily: 'inherit',
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }} />
-      <div
-        className="relative w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-5"
-        style={{ background: 'var(--bg-card)', border: '1px solid var(--card-border)' }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>
-              {userEmail?.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="text-sm font-bold" style={{ color: 'var(--text-heading)' }}>Admin Profile</p>
-              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{userEmail}</p>
-            </div>
-          </div>
-          <button onClick={onClose} style={{ color: 'var(--text-muted)' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
-          </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'var(--bg-primary)' }}>
-          {(['name', 'password'] as const).map((t) => (
-            <button key={t} onClick={() => { setTab(t); setMsg(null) }}
-              className="flex-1 py-2 rounded-lg text-xs font-semibold capitalize transition-all"
-              style={{
-                background: tab === t ? 'var(--bg-card)' : 'transparent',
-                color: tab === t ? 'var(--text-primary)' : 'var(--text-muted)',
-                boxShadow: tab === t ? '0 1px 4px rgba(0,0,0,0.15)' : 'none',
-              }}>
-              {t === 'name' ? 'Display Name' : 'Change Password'}
-            </button>
-          ))}
-        </div>
-
-        {/* Content */}
-        {tab === 'name' ? (
-          <div className="space-y-3">
-            <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>New Display Name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Alvin Deo" style={inputStyle} />
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>Current Password</label>
-              <div className="relative">
-                <input type={showCur ? 'text' : 'password'} value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} placeholder="••••••••" style={{ ...inputStyle, paddingRight: 40 }} />
-                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} onClick={() => setShowCur(!showCur)}>
-                  <Icon d={showCur ? icons.eyeOff : icons.eye} size={15} />
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>New Password</label>
-              <div className="relative">
-                <input type={showNew ? 'text' : 'password'} value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="••••••••" style={{ ...inputStyle, paddingRight: 40 }} />
-                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} onClick={() => setShowNew(!showNew)}>
-                  <Icon d={showNew ? icons.eyeOff : icons.eye} size={15} />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Feedback */}
-        {msg && (
-          <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium" style={{
-            background: msg.ok ? '#10b98118' : '#ef444418',
-            color: msg.ok ? '#10b981' : '#ef4444',
-            border: `1px solid ${msg.ok ? '#10b98130' : '#ef444430'}`,
-          }}>
-            <Icon d={msg.ok ? icons.check : 'M18 6 6 18M6 6l12 12'} size={14} />
-            {msg.text}
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex gap-3 pt-1">
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
-            style={{ background: 'var(--bg-primary)', color: 'var(--text-muted)', border: '1px solid var(--card-border)' }}>
-            Cancel
-          </button>
-          <button onClick={handleSave} disabled={saving} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-85 disabled:opacity-40"
-            style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>
-            {saving ? 'Saving…' : 'Save Changes'}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ── User Dropdown ─────────────────────────────────────────────────────────────
-function UserDropdown({ session, collapsed }: { session: { user?: { email?: string | null; name?: string | null } } | null; collapsed: boolean }) {
+function UserDropdown({ session, collapsed }: { session: { user?: { email?: string | null; name?: string | null; image?: string | null } } | null; collapsed: boolean }) {
   const [open, setOpen]           = useState(false)
-  const [profileOpen, setProfile] = useState(false)
   const { theme, toggleTheme }    = useTheme()
   const ref                       = useRef<HTMLDivElement>(null)
 
   const displayName = session?.user?.name ?? session?.user?.email ?? 'Admin'
   const initial     = displayName.charAt(0).toUpperCase()
   const email       = session?.user?.email ?? ''
+  const image       = session?.user?.image
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -359,16 +229,19 @@ function UserDropdown({ session, collapsed }: { session: { user?: { email?: stri
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  const menuItem = (icon: typeof icons.user, label: string, onClick: () => void, danger = false) => (
-    <button
-      onClick={() => { onClick(); setOpen(false) }}
-      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-left transition-all hover:opacity-80"
-      style={{ color: danger ? '#ef4444' : 'var(--text-primary)', background: 'transparent' }}
-    >
-      <span style={{ color: danger ? '#ef4444' : 'var(--text-muted)' }}><Icon d={icon} size={15} /></span>
-      {label}
-    </button>
-  )
+  const menuItem = (icon: typeof icons.user, label: string, href?: string, onClick?: () => void, danger = false) => {
+    const content = (
+      <span className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-left transition-all hover:opacity-80"
+        style={{ color: danger ? '#ef4444' : 'var(--text-primary)', background: 'transparent' }}
+      >
+        <span style={{ color: danger ? '#ef4444' : 'var(--text-muted)' }}><Icon d={icon} size={15} /></span>
+        {label}
+      </span>
+    )
+
+    if (href) return <Link href={href} onClick={() => setOpen(false)}>{content}</Link>
+    return <button onClick={() => { if(onClick) onClick(); setOpen(false) }} className="w-full">{content}</button>
+  }
 
   return (
     <div ref={ref} className="relative">
@@ -380,18 +253,22 @@ function UserDropdown({ session, collapsed }: { session: { user?: { email?: stri
       >
         {/* Avatar */}
         <div
-          className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+          className="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 overflow-hidden shadow-lg transition-transform group-hover:scale-105"
           style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}
         >
-          {initial}
+          {image ? (
+            <img src={image} className="w-full h-full object-cover" />
+          ) : (
+            <span>{initial}</span>
+          )}
         </div>
 
         {/* Name + chevron */}
         {!collapsed && (
           <>
             <div className="flex-1 min-w-0 text-left">
-              <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{displayName}</p>
-              <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>{email}</p>
+              <p className="text-sm font-bold truncate" style={{ color: 'var(--text-heading)' }}>{displayName}</p>
+              <p className="text-[11px] truncate opacity-60" style={{ color: 'var(--text-muted)' }}>{email}</p>
             </div>
             <span className="shrink-0 transition-transform duration-200" style={{ color: 'var(--text-muted)', transform: open ? 'rotate(0deg)' : 'rotate(180deg)' }}>
               <Icon d={icons.chevronUp} size={13} />
@@ -414,7 +291,7 @@ function UserDropdown({ session, collapsed }: { session: { user?: { email?: stri
 
           <div className="p-2 space-y-0.5">
             {/* Profile */}
-            {menuItem(icons.user, 'Edit Profile', () => setProfile(true))}
+            {menuItem(icons.user, 'Account Settings', '/dashboard/profile')}
 
             {/* Theme toggle */}
             <button
@@ -442,13 +319,10 @@ function UserDropdown({ session, collapsed }: { session: { user?: { email?: stri
             </Link>
 
             {/* Logout */}
-            {menuItem(icons.logout, 'Sign Out', () => signOut({ callbackUrl: '/auth/login' }), true)}
+            {menuItem(icons.logout, 'Sign Out', undefined, () => signOut({ callbackUrl: '/auth/login' }), true)}
           </div>
         </div>
       )}
-
-      {/* Profile Modal */}
-      <ProfileModal open={profileOpen} onClose={() => setProfile(false)} userEmail={email} />
     </div>
   )
 }
@@ -478,11 +352,17 @@ function Sidebar({ collapsed, onToggle, isMobile }: { collapsed: boolean; onTogg
         className="flex items-center px-4 border-b"
         style={{ borderColor: 'var(--card-border)', minHeight: 64 }}
       >
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0" style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>A</div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden shadow-inner border border-white/5" style={{ background: 'var(--bg-primary)', color: 'var(--accent)' }}>
+            {session?.user?.image ? (
+              <img src={session.user.image} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-lg">A</span>
+            )}
+          </div>
           <div>
-            <p className="text-sm font-bold" style={{ color: 'var(--text-heading)' }}>Portfolio</p>
-            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Admin Panel</p>
+            <p className="text-sm font-black tracking-tight" style={{ color: 'var(--text-heading)' }}>PORTFOLIO</p>
+            <p className="text-[10px] font-bold tracking-widest opacity-40 uppercase" style={{ color: 'var(--text-muted)' }}>Admin Panel</p>
           </div>
         </div>
         {isMobile && (
