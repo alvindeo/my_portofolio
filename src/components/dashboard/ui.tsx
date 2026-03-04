@@ -1,6 +1,44 @@
 'use client'
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import StackIcon from 'tech-stack-icons'
+
+// ── Safe icon wrapper (catches "Icon not found" errors) ──────────────────────
+class IconErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { error: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback?: React.ReactNode }) {
+    super(props)
+    this.state = { error: false }
+  }
+  static getDerivedStateFromError() { return { error: true } }
+  componentDidCatch() { /* suppress console noise in prod */ }
+  render() {
+    if (this.state.error) {
+      return this.props.fallback ?? (
+        <span style={{ fontSize: 10, opacity: 0.35, fontWeight: 700 }}>?</span>
+      )
+    }
+    return this.props.children
+  }
+}
+
+/** Drop-in replacement for StackIcon that never crashes on invalid slugs */
+export function SafeStackIcon({
+  name, className, fallback,
+}: {
+  name: string; className?: string; fallback?: React.ReactNode
+}) {
+  if (!name || !name.trim()) {
+    return fallback ? <>{fallback}</> : <span style={{ fontSize: 10, opacity: 0.35, fontWeight: 700 }}>?</span>
+  }
+  return (
+    <IconErrorBoundary fallback={fallback}>
+      <StackIcon name={name} className={className} />
+    </IconErrorBoundary>
+  )
+}
 
 // ── Design Tokens ────────────────────────────────────────────────────────────
 export const tok = {

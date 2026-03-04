@@ -5,7 +5,6 @@ import { Navbar } from '@/components/user/Navbar'
 import Footer from '@/components/user/Footer'
 import Link from 'next/link'
 import { motion, type Variants } from 'framer-motion'
-import StackIcon from 'tech-stack-icons'
 import { projectsData } from '@/data/projects'
 
 const allTags = ['All', ...Array.from(new Set(projectsData.flatMap((p) => p.tags)))]

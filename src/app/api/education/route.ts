@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 
 export async function GET() {
   try {
-    const items = await prisma.education.findMany({ orderBy: { degree: 'asc' } })
+    const items = await prisma.education.findMany({ orderBy: { createdAt: 'desc' } })
     return NextResponse.json(items)
   } catch (err) {
     console.error('[GET /api/education] Error:', err)

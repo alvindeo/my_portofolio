@@ -5,7 +5,7 @@ import { Navbar } from '@/components/user/Navbar'
 import Footer from '@/components/user/Footer'
 import Link from 'next/link'
 import { motion, type Variants } from 'framer-motion'
-import StackIcon from 'tech-stack-icons'
+import SafeStackIcon from '@/components/ui/SafeStackIcon'
 
 // ── TYPES ──────────────────────────────────────────────────────────────────
 
@@ -366,7 +366,7 @@ export default function AboutPage() {
                   {group.skills.map((skill, si) => (
                     <motion.div key={si} custom={si} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="skill-card flex flex-col items-center gap-3 p-5 rounded-2xl cursor-default w-24" style={{ background: 'var(--bg-card)', border: '1px solid var(--card-border)' }}>
                       <div className="w-10 h-10 flex items-center justify-center">
-                         {skill.icon ? <StackIcon name={skill.icon} className="w-10 h-10" /> : <div className="text-[10px] opacity-20">N/A</div>}
+                         {skill.icon ? <SafeStackIcon name={skill.icon} className="w-10 h-10" /> : <div className="text-[10px] opacity-20">N/A</div>}
                       </div>
                       <span className="text-xs font-medium text-center leading-tight" style={{ color: 'var(--text-muted)' }}>{skill.name}</span>
                     </motion.div>

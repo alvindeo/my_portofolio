@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 
 export async function GET() {
   try {
-    const items = await prisma.experience.findMany({ orderBy: { company: 'asc' } })
+    const items = await prisma.experience.findMany({ orderBy: { createdAt: 'desc' } })
     return NextResponse.json(items)
   } catch (error) {
     console.error('Experience GET error:', error)

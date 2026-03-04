@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Navbar } from '@/components/user/Navbar'
 import Footer from '@/components/user/Footer'
-import StackIcon from 'tech-stack-icons'
+import SafeStackIcon from '@/components/ui/SafeStackIcon'
 import { projectsData } from '@/data/projects'
 
 const fadeUp = {
@@ -318,7 +318,7 @@ export default function ProjectCaseStudy() {
                       style={{ background: 'var(--bg-card)', border: '1px solid var(--card-border)' }}>
                       <div className="w-9 h-9 rounded-lg flex items-center justify-center p-1.5 shrink-0"
                         style={{ background: 'var(--accent-dim)', border: '1px solid var(--accent-border)' }}>
-                        <StackIcon name={tech.icon} className="w-full h-full" />
+                        <SafeStackIcon name={tech.icon} className="w-full h-full" />
                       </div>
                       <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{tech.name}</span>
                     </div>

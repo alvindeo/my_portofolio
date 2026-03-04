@@ -3,9 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { DashboardShell } from '@/components/dashboard/DashboardShell'
 import {
   Btn, Spinner, Table, Td, Tr, Modal, Field,
-  ConfirmDelete, PageHeader, ToastContainer, useToast, tok
+  ConfirmDelete, PageHeader, ToastContainer, useToast, tok, SafeStackIcon
 } from '@/components/dashboard/ui'
-import StackIcon from 'tech-stack-icons'
 
 interface Skill { id: string; name: string; category: string; level: number; icon: string | null }
 const EMPTY = { name: '', category: '', level: 80, icon: '' }
@@ -98,7 +97,7 @@ export default function DashboardSkills() {
                     <Td>
                        {s.icon ? (
                          <div className="w-8 h-8 flex items-center justify-center p-1 rounded-lg border" style={{ background: 'var(--bg-secondary)', borderColor: tok.border }}>
-                            <StackIcon name={s.icon} className="w-full h-full" />
+                          <SafeStackIcon name={s.icon} className="w-full h-full" />
                          </div>
                        ) : (
                          <div className="w-8 h-8 flex items-center justify-center rounded-lg text-[10px]" style={{ background: 'var(--bg-secondary)', color: tok.muted }}>N/A</div>
@@ -136,7 +135,7 @@ export default function DashboardSkills() {
                <label className="text-xs font-semibold uppercase tracking-wide opacity-50">Icon</label>
                <div className="w-12 h-12 rounded-xl border-2 border-dashed flex items-center justify-center bg-zinc-50 dark:bg-zinc-800" style={{ borderColor: tok.border }}>
                   {debouncedIcon
-                    ? <StackIcon name={debouncedIcon} className="w-8 h-8" />
+                    ? <SafeStackIcon name={debouncedIcon} className="w-8 h-8" />
                     : <span className="opacity-20 text-[10px]">?</span>
                   }
                </div>

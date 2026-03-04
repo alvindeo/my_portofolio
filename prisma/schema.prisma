@@ -57,26 +57,28 @@ model About {
 }
 
 model Skill {
-  id       String @id @default(cuid())
-  name     String
-  category String
-  level    Int
-  icon     String?
+  id        String   @id @default(cuid())
+  name      String
+  category  String
+  level     Int
+  icon      String?
+  createdAt DateTime @default(now())
 }
 
 model Experience {
-  id           String  @id @default(cuid())
+  id           String   @id @default(cuid())
   company      String
   role         String
   description  String
   period       String
   tags         String
   achievements String
+  createdAt    DateTime @default(now())
 }
 
 
 model Education {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   degree      String
   institution String
   field       String
@@ -85,6 +87,7 @@ model Education {
   gpa         String?
   imageUrl    String?
   location    String?
+  createdAt   DateTime @default(now())
 }
 
 model Certificate {
