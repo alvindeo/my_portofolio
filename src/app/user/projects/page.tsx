@@ -64,21 +64,14 @@ function ProjectSkeleton() {
 
 // ── FEATURED SECTION (dipakai dari home page) ─────────────────────────────────
 export function ProjectsSection() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/projects')
-      .then((r) => r.json())
-      .then((d) => { if (Array.isArray(d)) setProjects(d) })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: projects = [], isLoading } = useSWR<Project[]>('/api/projects', fetcher, {
+    refreshInterval: 10000,
+  })
 
   const featured = projects.filter((p) => p.featured).slice(0, 3)
 
   return (
-    <section id="projects" className="max-w-6xl mx-auto px-6 py-20 relative overflow-hidden">
+    <div className="max-w-6xl mx-auto px-6 py-20 relative overflow-hidden">
       <div className="flex items-end justify-between mb-12">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "var(--accent)" }}>Projects</p>
@@ -89,7 +82,7 @@ export function ProjectsSection() {
         </motion.div>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[0,1,2].map(i => <ProjectSkeleton key={i} />)}
         </div>
@@ -123,7 +116,7 @@ export function ProjectsSection() {
           ))}
         </div>
       )}
-    </section>
+    </div>
   )
 }
 

@@ -5,6 +5,7 @@ import { Navbar } from "@/components/user/Navbar";
 import { motion, type Variants } from "framer-motion";
 import { SafeStackIcon } from "@/components/ui/SafeStackIcon";
 import Footer from "@/components/user/Footer";
+import Link from 'next/link'
 import useSWR from 'swr'
 
 const fetcher = (url: string) => fetch(url).then(r => r.json())
@@ -59,6 +60,37 @@ const fadeUp: Variants = {
     transition: { duration: 0.8, delay: i * 0.1, ease: [0.25, 0.1, 0, 1] }
   }),
 };
+
+// ── SECTION (dipakai dari home page) ─────────────────────────────────────────
+export function AboutSection() {
+  const { data: about } = useSWR<AboutData>('/api/about', fetcher)
+  
+  const bio = about?.bio || "Loading bio..."
+  const photoUrl = about?.photoUrl || "/alvin.jpg"
+
+  return (
+    <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+      <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+        <p className="text-xs tracking-[0.3em] uppercase mb-6 font-bold" style={{ color: "var(--accent)" }}>About Me</p>
+        <h2 className="mb-8" style={{ fontFamily: "'Syne', sans-serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 800, lineHeight: 1.1, color: "var(--text-heading)" }}>
+          I craft <span style={{ color: "var(--accent)" }}>digital</span> experiences.
+        </h2>
+        <div className="space-y-6 text-lg leading-relaxed mb-10" style={{ color: "var(--text-muted)" }}>
+          <p>{bio}</p>
+        </div>
+        <Link href="/user/about" className="inline-flex items-center gap-2 group text-sm font-bold uppercase tracking-widest border-b-2 py-1 transition-all hover:opacity-70" style={{ borderColor: 'var(--accent)', color: 'var(--text-heading)' }}>
+          Read Full Story <span className="transition-transform group-hover:translate-x-1">→</span>
+        </Link>
+      </motion.div>
+
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative">
+        <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden rotate-2 hover:rotate-0 transition-transform duration-700 shadow-2xl" style={{ border: '8px solid var(--bg-card)' }}>
+          <img src={photoUrl} alt="Alvin Deo" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+        </div>
+      </motion.div>
+    </div>
+  )
+}
 
 // ── PAGE ─────────────────────────────────────────────────────────────
 export default function AboutPage() {
