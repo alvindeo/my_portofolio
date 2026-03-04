@@ -56,6 +56,9 @@ const icons = {
   eyeOff:     ['M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24', 'M1 1l22 22'],
   chevronUp:  'm18 15-6-6-6 6',
   certificate: ['M6 9h12', 'M6 13h9', 'M6 17h12', 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'],
+  bell:        ['M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9', 'M13.73 21a2 2 0 0 1-3.46 0'],
+  mail:        ['M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z', 'M22 6l-10 7L2 6'],
+  trash:       ['M3 6h18', 'M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6', 'M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'],
 }
 
 // ── Nav items ─────────────────────────────────────────────────────────────────
@@ -67,7 +70,145 @@ const navItems = [
   { label: 'About',      href: '/dashboard/about',      icon: icons.about      },
   { label: 'Education',  href: '/dashboard/education',  icon: icons.education  },
   { label: 'Certificates', href: '/dashboard/certificates', icon: icons.certificate },
+  { label: 'Inbox',      href: '/dashboard/inbox',      icon: icons.mail       },
 ]
+
+// ── Contact type ─────────────────────────────────────────────────────────────
+interface ContactMsg {
+  id: string; name: string; email: string; subject: string; message: string;
+  isRead: boolean; createdAt: string;
+}
+
+// ── Notification Bell ─────────────────────────────────────────────────────────
+function NotificationBell() {
+  const [msgs, setMsgs]     = useState<ContactMsg[]>([])
+  const [open, setOpen]     = useState(false)
+  const ref                 = useRef<HTMLDivElement>(null)
+
+  const fetchMsgs = () =>
+    fetch('/api/contact').then(r => r.json()).then((d: ContactMsg[]) => { if (Array.isArray(d)) setMsgs(d) }).catch(() => {})
+
+  useEffect(() => { fetchMsgs() }, [])
+
+  // Poll every 30s for new messages
+  useEffect(() => { const id = setInterval(fetchMsgs, 30000); return () => clearInterval(id) }, [])
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const unread = msgs.filter(m => !m.isRead)
+
+  const markRead = async (id: string) => {
+    await fetch(`/api/contact/${id}`, { method: 'PATCH' })
+    setMsgs(prev => prev.map(m => m.id === id ? { ...m, isRead: true } : m))
+  }
+
+  const markAllRead = async () => {
+    await Promise.all(unread.map(m => fetch(`/api/contact/${m.id}`, { method: 'PATCH' })))
+    setMsgs(prev => prev.map(m => ({ ...m, isRead: true })))
+  }
+
+  const formatTime = (iso: string) => {
+    const d = new Date(iso)
+    const now = new Date()
+    const diff = Math.floor((now.getTime() - d.getTime()) / 60000)
+    if (diff < 1) return 'Just now'
+    if (diff < 60) return `${diff}m ago`
+    if (diff < 1440) return `${Math.floor(diff/60)}h ago`
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => { setOpen(!open); if (!open) fetchMsgs() }}
+        className="relative p-2 rounded-xl transition-all hover:opacity-80"
+        style={{ color: 'var(--text-muted)', background: 'var(--bg-primary)', border: '1px solid var(--card-border)' }}
+      >
+        <Icon d={icons.bell} size={17} />
+        {unread.length > 0 && (
+          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold"
+            style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>
+            {unread.length > 9 ? '9+' : unread.length}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-80 rounded-2xl shadow-2xl overflow-hidden"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--card-border)', zIndex: 50 }}>
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: 'var(--card-border)' }}>
+            <div className="flex items-center gap-2">
+              <span style={{ color: 'var(--text-heading)', fontWeight: 700, fontSize: 14 }}>Inbox</span>
+              {unread.length > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold"
+                  style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>
+                  {unread.length} new
+                </span>
+              )}
+            </div>
+            {unread.length > 0 && (
+              <button onClick={markAllRead} className="text-[11px] font-medium hover:opacity-70" style={{ color: 'var(--accent)' }}>
+                Mark all read
+              </button>
+            )}
+          </div>
+
+          {/* Messages */}
+          <div className="overflow-y-auto" style={{ maxHeight: 340 }}>
+            {msgs.length === 0 ? (
+              <div className="flex flex-col items-center py-10 gap-2">
+                <span className="text-3xl opacity-30">📭</span>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>No messages yet</p>
+              </div>
+            ) : (
+              msgs.slice(0, 10).map((msg) => (
+                <div key={msg.id}
+                  className="flex items-start gap-3 px-4 py-3 border-b transition-colors hover:opacity-90"
+                  style={{ borderColor: 'var(--card-border)', background: msg.isRead ? 'transparent' : 'var(--accent-dim)' }}>
+                  {/* Avatar */}
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                    style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>
+                    {msg.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <p className="text-xs font-bold truncate" style={{ color: 'var(--text-heading)' }}>{msg.name}</p>
+                      <span className="text-[10px] shrink-0" style={{ color: 'var(--text-muted)' }}>{formatTime(msg.createdAt)}</span>
+                    </div>
+                    <p className="text-[11px] font-medium truncate" style={{ color: 'var(--accent)' }}>{msg.subject}</p>
+                    <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--text-muted)' }}>{msg.message}</p>
+                  </div>
+                  {/* Dismiss (mark as read) - tidak menghapus dari DB */}
+                  {!msg.isRead && (
+                    <button onClick={() => markRead(msg.id)} title="Mark as read"
+                      className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center hover:opacity-70"
+                      style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}>
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6 9 17l-5-5"/></svg>
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="px-4 py-3 border-t" style={{ borderColor: 'var(--card-border)' }}>
+            <Link href="/dashboard/inbox" onClick={() => setOpen(false)}
+              className="flex items-center justify-center gap-1.5 text-xs font-semibold hover:opacity-70"
+              style={{ color: 'var(--accent)' }}>
+              <Icon d={icons.mail} size={12} /> View all messages →
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 // ── Profile Modal ─────────────────────────────────────────────────────────────
 function ProfileModal({ open, onClose, userEmail }: { open: boolean; onClose: () => void; userEmail: string }) {
@@ -442,6 +583,7 @@ function Topbar({ breadcrumb, onToggle, collapsed, isMobile }: { breadcrumb: str
       </nav>
 
       <div className="flex-1" />
+      <NotificationBell />
       <Link href="/" className="text-[10px] sm:text-xs px-2.5 py-1.5 rounded-xl border font-medium transition-all hover:opacity-80 shrink-0"
         style={{ color: 'var(--text-muted)', borderColor: 'var(--card-border)' }}>
         {isMobile ? 'Exit' : 'View Site'} →

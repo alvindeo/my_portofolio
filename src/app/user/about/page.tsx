@@ -57,79 +57,6 @@ interface SkillData {
 
 // ── FALLBACK DATA ──────────────────────────────────────────────────────────
 
-const fallbackSkillGroups = [
-  {
-    category: 'Frontend',
-    skills: [
-      { name: 'React', icon: 'react' },
-      { name: 'Next.js', icon: 'nextjs' },
-      { name: 'TypeScript', icon: 'typescript' },
-      { name: 'Tailwind CSS', icon: 'tailwindcss' },
-      { name: 'Figma', icon: 'figma' },
-    ],
-  },
-  {
-    category: 'Backend',
-    skills: [
-      { name: 'Python', icon: 'python' },
-      { name: 'Laravel', icon: 'laravel' },
-      { name: 'Node.js', icon: 'nodejs' },
-      { name: 'PostgreSQL', icon: 'postgresql' },
-    ],
-  },
-  {
-    category: 'AI / ML',
-    skills: [
-      { name: 'OpenCV', icon: 'opencv' },
-      { name: 'OpenAI', icon: 'openai' },
-      { name: 'Google Colab', icon: 'colab' },
-    ],
-  },
-  {
-    category: 'Tools',
-    skills: [
-      { name: 'Git', icon: 'git' },
-      { name: 'GitHub', icon: 'github' },
-      { name: 'Docker', icon: 'docker' },
-      { name: 'VS Code', icon: 'vscode' },
-      { name: 'Postman', icon: 'postman' },
-    ],
-  },
-]
-
-const fallbackEducation = [
-  {
-    id: '1',
-    degree: 'S1 Informatics Engineering',
-    institution: 'Universitas Dian Nuswantoro (UDINUS)',
-    period: '2023 – Present',
-    description: 'Focusing on Artificial Intelligence, Machine Learning, and Software Engineering.',
-    gpa: '3.77 / 4.0',
-    image: '/education/udinus.png',
-    location: 'Semarang, Indonesia',
-  },
-  {
-    id: '2',
-    degree: 'SMA Negeri 5 Semarang',
-    institution: 'SMA Negeri 5 Semarang',
-    period: '2019 – 2022',
-    description: 'Focusing on Science and Mathematics.',
-    gpa: '84.94 / 100',
-    image: '/education/sma.png',
-    location: 'Semarang, Indonesia',
-  },
-]
-
-const fallbackCertifications = [
-  {
-    id: '1',
-    title: 'Artificial Intelligence Essentials V2',
-    issuer: 'Coursera – DeepLearning.AI',
-    year: '2025',
-    image: '/certif/Artificial_Intelliegence.png',
-    url: 'https://www.credly.com/badges/74fc8006-f5eb-454f-9705-5925a6d064ce/linked_in_profile',
-  },
-]
 
 // ── ANIMATION ─────────────────────────────────────────────────────────────
 
@@ -271,18 +198,13 @@ export default function AboutPage() {
     about?.bio4
   ].filter(Boolean) as string[]
 
-  const displayEdu = eduList.length > 0 ? eduList : (fallbackEducation as any[])
-  const displayCert = certList.length > 0 ? certList : (fallbackCertifications as any[])
-  
-  // Group real skills
+  const displayEdu = eduList
+  const displayCert = certList
+
+  // Group real skills by category
   const groupedSkills: Record<string, SkillData[]> = {}
-  skillList.forEach(s => {
-    groupedSkills[s.category] = [...(groupedSkills[s.category] ?? []), s]
-  })
-  
-  const displaySkillGroups = skillList.length > 0 
-    ? Object.entries(groupedSkills).map(([cat, sks]) => ({ category: cat, skills: sks.map(s => ({ name: s.name, icon: s.icon })) }))
-    : fallbackSkillGroups
+  skillList.forEach(s => { groupedSkills[s.category] = [...(groupedSkills[s.category] ?? []), s] })
+  const displaySkillGroups = Object.entries(groupedSkills).map(([cat, sks]) => ({ category: cat, skills: sks.map(s => ({ name: s.name, icon: s.icon })) }))
 
   const github = about?.github ?? 'https://github.com/alvindeo'
   const linkedin = about?.linkedin ?? 'https://www.linkedin.com/in/alvin-deo-ardiansyah-04b7602b4/'
@@ -358,23 +280,42 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto">
           <p className="text-xs tracking-widest uppercase mb-3" style={{ color: 'var(--accent)' }}>Skills</p>
           <h2 className="mb-14" style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, color: 'var(--text-heading)' }}>Technologies I work with</h2>
-          <div className="grid md:grid-cols-2 gap-12">
-            {displaySkillGroups.map((group, gi) => (
-              <div key={gi}>
-                <div className="flex items-center gap-4 mb-6"><span className="text-xs font-semibold tracking-widest uppercase" style={{ color: 'var(--accent)' }}>{group.category}</span><div className="flex-1 h-px" style={{ background: 'var(--card-border)' }} /></div>
-                <div className="flex flex-wrap gap-4">
-                  {group.skills.map((skill, si) => (
-                    <motion.div key={si} custom={si} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="skill-card flex flex-col items-center gap-3 p-5 rounded-2xl cursor-default w-24" style={{ background: 'var(--bg-card)', border: '1px solid var(--card-border)' }}>
-                      <div className="w-10 h-10 flex items-center justify-center">
-                         {skill.icon ? <SafeStackIcon name={skill.icon} className="w-10 h-10" /> : <div className="text-[10px] opacity-20">N/A</div>}
-                      </div>
-                      <span className="text-xs font-medium text-center leading-tight" style={{ color: 'var(--text-muted)' }}>{skill.name}</span>
-                    </motion.div>
-                  ))}
+          {/* Skills: empty state jika kosong */}
+          {loading ? (
+            <div className="grid md:grid-cols-2 gap-12">
+              {[0,1,2,3].map(i => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-3 w-24 rounded-full mb-6" style={{ background: 'var(--bg-secondary)' }} />
+                  <div className="flex flex-wrap gap-4">
+                    {[0,1,2,3].map(j => <div key={j} className="w-24 h-28 rounded-2xl" style={{ background: 'var(--bg-secondary)' }} />)}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : displaySkillGroups.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
+              <span className="text-5xl opacity-30">⚡</span>
+              <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>No skills yet. Add from dashboard.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-12">
+              {displaySkillGroups.map((group, gi) => (
+                <div key={gi}>
+                  <div className="flex items-center gap-4 mb-6"><span className="text-xs font-semibold tracking-widest uppercase" style={{ color: 'var(--accent)' }}>{group.category}</span><div className="flex-1 h-px" style={{ background: 'var(--card-border)' }} /></div>
+                  <div className="flex flex-wrap gap-4">
+                    {group.skills.map((skill, si) => (
+                      <motion.div key={si} custom={si} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="skill-card flex flex-col items-center gap-3 p-5 rounded-2xl cursor-default w-24" style={{ background: 'var(--bg-card)', border: '1px solid var(--card-border)' }}>
+                        <div className="w-10 h-10 flex items-center justify-center">
+                          {skill.icon ? <SafeStackIcon name={skill.icon} className="w-10 h-10" /> : <div className="text-[10px] opacity-20">N/A</div>}
+                        </div>
+                        <span className="text-xs font-medium text-center leading-tight" style={{ color: 'var(--text-muted)' }}>{skill.name}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -383,6 +324,13 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto">
           <p className="text-xs tracking-widest uppercase mb-3" style={{ color: 'var(--accent)' }}>Education</p>
           <h2 className="mb-12" style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, color: 'var(--text-heading)' }}>Academic background</h2>
+          {/* Education: empty state jika kosong */}
+          {displayEdu.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
+              <span className="text-5xl opacity-30">🎓</span>
+              <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>No education records yet. Add from dashboard.</p>
+            </div>
+          ) : (
           <div className="flex flex-col gap-6">
           {displayEdu.map((edu, i) => (
             <motion.div key={edu.id || i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-2xl overflow-hidden card-hover" style={{ background: 'var(--bg-card)', border: '1px solid var(--card-border)' }}>
@@ -393,17 +341,8 @@ export default function AboutPage() {
                 <div className="flex-1 p-8 flex flex-col justify-between gap-6">
                   <div>
                     <div className="flex flex-wrap items-center gap-3 mb-4">
-                      <span className="tag">
-                      {edu.period ?? (edu as any).period}
-                      </span>
-                      {edu.location && (
-                        <span className="flex items-center gap-1 text-xs" style={{ color: 'var(--text-muted)' }}>
-                          <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                          </svg>
-                          {edu.location}
-                        </span>
-                      )}
+                      <span className="tag">{edu.period ?? (edu as any).period}</span>
+                      {edu.location && (<span className="flex items-center gap-1 text-xs" style={{ color: 'var(--text-muted)' }}><svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>{edu.location}</span>)}
                     </div>
                     <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Syne', sans-serif", color: 'var(--text-heading)' }}>{edu.degree}</h3>
                     <p className="text-base font-semibold mb-3" style={{ color: 'var(--accent)' }}>{edu.institution}</p>
@@ -415,6 +354,7 @@ export default function AboutPage() {
             </motion.div>
           ))}
           </div>
+          )}
         </div>
       </section>
 
@@ -423,6 +363,13 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto">
           <p className="text-xs tracking-widest uppercase mb-3" style={{ color: 'var(--accent)' }}>Certifications</p>
           <h2 className="mb-12" style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, color: 'var(--text-heading)' }}>Credentials & achievements</h2>
+          {/* Certifications: empty state jika kosong */}
+          {displayCert.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
+              <span className="text-5xl opacity-30">🏆</span>
+              <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>No certificates yet. Add from dashboard.</p>
+            </div>
+          ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayCert.map((cert, i) => (
               <motion.a key={cert.id || i} href={cert.url || '#'} target="_blank" rel="noopener noreferrer" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} whileHover={{ y: -8 }} className="group block rounded-2xl overflow-hidden cursor-pointer" style={{ background: 'var(--bg-card)', border: '1px solid var(--card-border)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
@@ -437,6 +384,7 @@ export default function AboutPage() {
               </motion.a>
             ))}
           </div>
+          )}
         </div>
       </section>
 

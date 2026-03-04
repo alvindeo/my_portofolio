@@ -7,7 +7,6 @@ import { motion } from 'framer-motion'
 import { Navbar } from '@/components/user/Navbar'
 import Footer from '@/components/user/Footer'
 import SafeStackIcon from '@/components/ui/SafeStackIcon'
-import { projectsData } from '@/data/projects'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -98,36 +97,8 @@ export default function ProjectCaseStudy() {
         return
       }
 
-      // 2. Fallback: try static data (numeric id)
-      const staticP = projectsData.find((p) => p.id === Number(id))
-      if (staticP) {
-        setProject({
-          id:              staticP.id,
-          title:           staticP.title,
-          tagline:         staticP.tagline,
-          image:           staticP.image,
-          tags:            staticP.tags,
-          year:            staticP.year,
-          liveUrl:         staticP.liveUrl,
-          githubUrl:       staticP.githubUrl,
-          fullDescription: staticP.fullDescription,
-          highlights:      staticP.highlights,
-          challenges:      staticP.challenges,
-          outcome:         staticP.outcome,
-          techStack:       staticP.techStack,
-        })
-        const nxtStatic = projectsData.find((p) => p.id === staticP.id + 1) ?? projectsData[0]
-        setNext({
-          id: nxtStatic.id, title: nxtStatic.title,
-          tagline: nxtStatic.tagline, image: nxtStatic.image,
-          tags: nxtStatic.tags, year: nxtStatic.year,
-          liveUrl: nxtStatic.liveUrl, githubUrl: nxtStatic.githubUrl,
-          fullDescription: '', highlights: [], challenges: '', outcome: '',
-          techStack: nxtStatic.techStack,
-        })
-      } else {
-        setNotFound(true)
-      }
+      // DB not found → 404
+      setNotFound(true)
       setLoading(false)
     }
     load()
