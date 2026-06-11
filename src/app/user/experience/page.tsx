@@ -7,7 +7,10 @@ import Footer from "@/components/user/Footer";
 import { motion, type Variants } from "framer-motion";
 import useSWR from 'swr'
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = (url: string) => fetch(url).then(r => {
+  if (!r.ok) throw new Error('API error')
+  return r.json()
+})
 
 // ── TYPES ─────────────────────────────────────────────────────────────────────
 interface Experience {

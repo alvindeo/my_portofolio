@@ -8,7 +8,10 @@ import { motion, type Variants, AnimatePresence } from 'framer-motion'
 import { SafeStackIcon } from "@/components/ui/SafeStackIcon";
 import useSWR from 'swr'
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = (url: string) => fetch(url).then(r => {
+  if (!r.ok) throw new Error('API error')
+  return r.json()
+})
 
 // ── TYPES ─────────────────────────────────────────────────────────────────────
 interface Project {
@@ -64,9 +67,10 @@ function ProjectSkeleton() {
 
 // ── FEATURED SECTION (dipakai dari home page) ─────────────────────────────────
 export function ProjectsSection() {
-  const { data: projects = [], isLoading } = useSWR<Project[]>('/api/projects', fetcher, {
+  const { data: projectsData, isLoading } = useSWR<Project[]>('/api/projects', fetcher, {
     refreshInterval: 10000,
   })
+  const projects = Array.isArray(projectsData) ? projectsData : []
 
   const featured = projects.filter((p) => p.featured).slice(0, 3)
 
@@ -125,9 +129,10 @@ export default function ProjectsPage() {
   const [search, setSearch] = useState('')
   const [activeTag, setActiveTag] = useState('All')
 
-  const { data: projects = [], isLoading } = useSWR<Project[]>('/api/projects', fetcher, {
+  const { data: projectsData, isLoading } = useSWR<Project[]>('/api/projects', fetcher, {
     refreshInterval: 10000, // Sync setiap 10 detik agar pengunjung melihat info terbaru
   })
+  const projects = Array.isArray(projectsData) ? projectsData : []
 
   // Build tag list dynamically from DB data
   const allTags = ['All', ...Array.from(new Set(projects.flatMap((p) => p.techStack ?? [])))]

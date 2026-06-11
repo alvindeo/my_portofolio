@@ -5,7 +5,10 @@ import { DashboardShell } from '@/components/dashboard/DashboardShell'
 import { motion, AnimatePresence } from 'framer-motion'
 import useSWR, { mutate } from 'swr'
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = (url: string) => fetch(url).then(r => {
+  if (!r.ok) throw new Error('API error')
+  return r.json()
+})
 
 interface Contact {
   id: string

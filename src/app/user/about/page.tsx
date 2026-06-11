@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React from "react";
 import { Navbar } from "@/components/user/Navbar";
@@ -11,7 +11,10 @@ import { Github, Linkedin, Mail, Download, ExternalLink } from 'lucide-react'
 import { useRef } from "react";
 import { useInView } from "framer-motion";
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = (url: string) => fetch(url).then(r => {
+  if (!r.ok) throw new Error('API error')
+  return r.json()
+})
 
 // ── TYPES ──────────────────────────────────────────────────────────────────
 interface AboutData {
